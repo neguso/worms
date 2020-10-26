@@ -13,10 +13,16 @@ namespace Game
 		}
 
 
+		public Size Size
+		{
+			get => new Size(buffer.GetLength(0), buffer.GetLength(1));
+		}
+
+
 		public void Render(Action<Brick, Point> action)
 		{
-			for (int x = 0; x < buffer.GetLength(0); x++)
-				for (int y = 0; y < buffer.GetLength(1); y++)
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
 					action(buffer[x, y], new Point(x, y));
     }
 
@@ -67,16 +73,26 @@ namespace Game
 			HLine(location, size.Width, bricks[0], new Brick[] { corners[0], corners[1] });
 		}
 
-		public void Area(Point a, int width, int height, Brick brick)
+		public void Area(Point a, Size size, Brick brick)
 		{
-			for(int x = 0; x < width; x++)
-				for(int y = 0; y < height; y++)
+			for(int x = 0; x < size.Width; x++)
+				for(int y = 0; y < size.Height; y++)
 					SetBrick(new Point(a.X + x, a.Y + y), brick);
 		}
 
-		public void Draw(Frame frame, Point location, Size size)
+		public void Text(Point a, string text)
 		{
 			//TODO
+		}
+
+		public void Draw(Frame frame, Point location)
+		{
+			frame.Render((brick, point) =>
+			{
+				if(brick == null || brick == Brick.Empty) return;
+
+				SetBrick(new Point(location.X + point.X, location.Y + point.Y), brick);
+			});
 		}
 
 	}

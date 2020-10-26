@@ -39,40 +39,28 @@ namespace Game
 			};
 			gameWorld.Players.Add(playerOne);
 
+
+			var el = new TestElement();
+			gameWorld.Elements.Add(el);
+
+
 			var keyboard = new Keyboard();
 
 			var screen = new Screen();
-			var frame = new Frame(new Size(100, 30));
-frame.SetBrick(new Point(10, 10), Brick.From('X'));
-frame.HLine(new Point(0, 5), 10, Brick.From('-'));
-frame.HLine(new Point(0, 6), 10, Brick.From('-'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.HLine(new Point(0, 7), 3, Brick.From('-'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.HLine(new Point(0, 8), 2, Brick.From('-'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.HLine(new Point(0, 9), 1, Brick.From('-'), new Brick[] { Brick.From('a'), Brick.From('b') });
+			screen.Size = new Size(100, 40);
+			screen.Title = "The Worms Game";
 
-frame.VLine(new Point(20, 5), 10, Brick.From('|'));
-frame.VLine(new Point(21, 5), 10, Brick.From('|'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.VLine(new Point(22, 5), 3, Brick.From('|'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.VLine(new Point(23, 5), 2, Brick.From('|'), new Brick[] { Brick.From('a'), Brick.From('b') });
-frame.VLine(new Point(24, 5), 1, Brick.From('|'), new Brick[] { Brick.From('a'), Brick.From('b') });
+			var frame = new Frame(screen.Size);
 
-frame.Rectangle(new Point(40, 0), new Size(5, 5), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
-frame.Rectangle(new Point(40, 10), new Size(3, 3), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
-frame.Rectangle(new Point(40, 15), new Size(2, 2), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
-frame.Rectangle(new Point(40, 18), new Size(1, 1), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
-
-frame.Area(new Point(50, 10), 4, 3, Brick.From('*'));
-
-screen.Update(frame, new Point(1, 1));
 			do
 			{
 				keyboard.Read();
 
 				gameWorld.Tick(keyboard);
-
 				gameWorld.Render(frame);
 
-				//screen.Update(frame, new Point(5, 5));
+				screen.WaitRefresh();
+				screen.Draw(frame, new Point(5, 5));
 
 				keyboard.Clear();
 			}

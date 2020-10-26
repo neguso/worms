@@ -7,14 +7,25 @@ namespace Game
 	{
 		public Screen()
 		{
-			Size = new Size(Console.WindowWidth, Console.WindowHeight);
 		}
 
-		public Screen(Size size)
+
+		public bool WaitForRefresh = true;
+
+		public void WaitRefresh()
 		{
-			Size = size;
-			Console.WindowWidth = Size.Width;
-			Console.WindowHeight = Size.Height;
+			if(WaitForRefresh)
+				System.Threading.Thread.Sleep(50);
+		}
+
+		public Size Size
+		{
+			get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+			set
+			{
+				Console.BufferWidth = Console.WindowWidth = value.Width;
+				Console.BufferHeight = Console.WindowHeight = value.Height;
+			}
 		}
 
 		public string Title
@@ -23,10 +34,8 @@ namespace Game
 			set { Console.Title = value; }
 		}
 
-		public Size Size { get; }
 
-
-		public void Update(Frame frame, Point origin)
+		public void Draw(Frame frame, Point origin)
 		{
 			frame.Render((brick, point) =>
 			{
@@ -47,9 +56,9 @@ namespace Game
 			});
 		}
 
-		public void Update(Frame frame)
+		public void Draw(Frame frame)
 		{
-			Update(frame, Point.Empty);
+			Draw(frame, Point.Empty);
 		}
 	}
 }
