@@ -61,7 +61,7 @@ frame.Rectangle(new Point(40, 10), new Size(3, 3), new Brick[] { Brick.From('a')
 frame.Rectangle(new Point(40, 15), new Size(2, 2), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
 frame.Rectangle(new Point(40, 18), new Size(1, 1), new Brick[] { Brick.From('a'), Brick.From('b'), Brick.From('c'), Brick.From('d') }, new Brick[] { Brick.From('1'), Brick.From('2'), Brick.From('3'), Brick.From('4') });
 
-frame.Area(new Point(50, 10), 4, 3, Brick.From('X'));
+frame.Area(new Point(50, 10), 4, 3, Brick.From('*'));
 
 screen.Update(frame, new Point(1, 1));
 			do
