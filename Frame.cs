@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Game
@@ -18,6 +19,13 @@ namespace Game
 			get => new Size(buffer.GetLength(0), buffer.GetLength(1));
 		}
 
+
+		public void Clear()
+		{
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
+					buffer[x, y] = null;
+		}
 
 		public void Render(Action<Brick, Point> action)
 		{
@@ -82,7 +90,10 @@ namespace Game
 
 		public void Text(Point a, string text)
 		{
-			//TODO
+			if(string.IsNullOrEmpty(text)) return;
+			var chars = text.ToCharArray();
+			for(int i = 0; i < chars.Length; i++)
+				SetBrick(new Point(a.X + i, a.Y), Brick.From(chars[i]));
 		}
 
 		public void Draw(Frame frame, Point location)

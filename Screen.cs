@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace Game
@@ -7,6 +8,7 @@ namespace Game
 	{
 		public Screen()
 		{
+			Console.CursorVisible = false;
 		}
 
 
@@ -20,11 +22,11 @@ namespace Game
 
 		public Size Size
 		{
-			get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+			get { return new Size(Console.WindowWidth, Console.WindowHeight - 1); }
 			set
 			{
 				Console.BufferWidth = Console.WindowWidth = value.Width;
-				Console.BufferHeight = Console.WindowHeight = value.Height;
+				Console.BufferHeight = Console.WindowHeight = value.Height + 1;
 			}
 		}
 
@@ -34,26 +36,57 @@ namespace Game
 			set { Console.Title = value; }
 		}
 
+		public ConsoleColor ForegroundColor
+		{
+			get { return Console.ForegroundColor; }
+			set { Console.ForegroundColor = value; }
+		}
+
+		public ConsoleColor BackgroundColor
+		{
+			get { return Console.BackgroundColor; }
+			set { Console.BackgroundColor = value; }
+		}
+
+
+		public void Clear()
+		{
+			Console.Clear();
+		}
 
 		public void Draw(Frame frame, Point origin)
 		{
+			var w = new Stopwatch();
+			w.Start();
+
+			var oldFore = Console.ForegroundColor;
+			var oldBack = Console.BackgroundColor;
+			var oldPos = new Point(Console.CursorLeft, Console.CursorTop);
+
 			frame.Render((brick, point) =>
 			{
-				if(brick == null || brick == Brick.Empty) return;
-
-				var oldFore = Console.ForegroundColor;
-				var oldBack = Console.BackgroundColor;
-				var oldPos = new Point(Console.CursorLeft, Console.CursorTop);
-
-				Console.ForegroundColor = brick.ForeColor;
-				Console.BackgroundColor = brick.BackColor;
 				Console.SetCursorPosition(origin.X + point.X, origin.Y + point.Y);
-				Console.Write(brick.Char);
 
-				Console.ForegroundColor = oldFore;
-				Console.BackgroundColor = oldBack;
-				Console.SetCursorPosition(oldPos.X, oldPos.Y);
+				if(brick == null || brick == Brick.Empty)
+				{
+					//Console.ForegroundColor = ForegroundColor;
+					//Console.BackgroundColor = BackgroundColor;
+					Console.Write(' ');
+				}
+				else
+				{
+					Console.ForegroundColor = brick.ForeColor;
+					Console.BackgroundColor = brick.BackColor;
+					Console.Write(brick.Char);
+				}
 			});
+
+			Console.ForegroundColor = oldFore;
+			Console.BackgroundColor = oldBack;
+			Console.SetCursorPosition(oldPos.X, oldPos.Y);
+
+			w.Stop();
+			var d = w.ElapsedMilliseconds;
 		}
 
 		public void Draw(Frame frame)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace Game
@@ -7,6 +8,27 @@ namespace Game
 	{
 		static void Main(string[] args)
 		{
+			using (var stdout = Console.OpenStandardOutput(3000))
+			{
+					// 
+					var b = new byte[3000];
+					for (int i = 0; i < 3000; i++)
+					{
+							b[i] = 55;
+					}
+
+var w = new Stopwatch();
+			w.Start();
+
+					stdout.Write(b, 0, b.Length);
+					stdout.Write()
+					
+					w.Stop();
+			var d = w.ElapsedMilliseconds;
+			}
+			Console.ReadLine();
+return;
+
 			// menu world //
 			//TODO
 
@@ -20,8 +42,8 @@ namespace Game
 				{
 					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Escape),
 					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Enter),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down),
+					//new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
+					//new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down),
 				}
 			};
 			gameWorld.Players.Add(host);
@@ -42,13 +64,15 @@ namespace Game
 
 			var el = new TestElement();
 			gameWorld.Elements.Add(el);
-
+			el.Players.Add(playerOne);
+			
 
 			var keyboard = new Keyboard();
 
 			var screen = new Screen();
 			screen.Size = new Size(100, 40);
 			screen.Title = "The Worms Game";
+			screen.Clear();
 
 			var frame = new Frame(screen.Size);
 
@@ -57,16 +81,15 @@ namespace Game
 				keyboard.Read();
 
 				gameWorld.Tick(keyboard);
+				frame.Clear();
 				gameWorld.Render(frame);
 
 				screen.WaitRefresh();
-				screen.Draw(frame, new Point(5, 5));
+				screen.Draw(frame, new Point(0, 0));
 
 				keyboard.Clear();
 			}
 			while(!host.Quit);
-
-
 		}
 	}
 }

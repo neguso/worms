@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Game
 {
@@ -24,7 +25,8 @@ namespace Game
 				if(command != null)
 				{
 					player.Process(command);
-					Elements.ForEach(element => element.Process(command));
+					var list = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
+					list.ForEach(element => element.Process(command));
 				}
 				Elements.ForEach(element => element.Update());
 			});

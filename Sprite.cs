@@ -45,7 +45,6 @@ namespace Game
 			get { return (DateTime.Now - LastUpdated).TotalMilliseconds > UpdateInterval; }
 		}
 
-
 		public virtual void Process(Command command)
 		{
 			this.Commands.Enqueue(command);
@@ -67,17 +66,23 @@ namespace Game
 
 	public class TestElement : Element
 	{
-		public TestElement() : base(new Point(0, 0), new Size(5, 2))
+		public TestElement() : base(new Point(0, 0), new Size(2, 2))
 		{
 		}
 
 
 		protected override void UpdateCore(Command command)
 		{
-			// react to time and commands
+			if(command == Command.Up)
+				Location.Offset(new Point(0, -1));
+			else if(command == Command.Down)
+				Location.Offset(new Point(0, 1));
+			else if(command == Command.Left)
+				Location.Offset(new Point(-1, 0));
+			else if(command == Command.Right)
+				Location.Offset(new Point(1, 0));
 
-			var rnd = new Random();
-			Area(Location, Size, Brick.From((char)((int)'a' + rnd.Next(25))));
+			Area(Point.Empty, Size, Brick.From('\x2592'));
 		}
 	}
 
