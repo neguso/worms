@@ -66,7 +66,7 @@ namespace Game
 
 	public class TestElement : Element
 	{
-		public TestElement() : base(new Point(0, 0), new Size(2, 2))
+		public TestElement() : base(new Point(0, 0), new Size(20, 8))
 		{
 		}
 
@@ -82,7 +82,7 @@ namespace Game
 			else if(command == Command.Right)
 				Location.Offset(new Point(1, 0));
 
-			Area(Point.Empty, Size, Brick.From('\x2592'));
+			Area(Point.Empty, Size, Brick.From('\xb1'));
 		}
 	}
 

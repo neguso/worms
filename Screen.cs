@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 
 namespace Game
 {
@@ -14,10 +15,17 @@ namespace Game
 
 		public bool WaitForRefresh = true;
 
-		public void WaitRefresh()
+		private DateTime lastRefresh = DateTime.MinValue;
+
+		public void WaitRefresh(int duration = 50)
 		{
-			if(WaitForRefresh)
-				System.Threading.Thread.Sleep(50);
+			if (WaitForRefresh)
+			{
+				double elapsed = (DateTime.Now - lastRefresh).TotalMilliseconds;
+				if (elapsed < duration)
+					System.Threading.Thread.Sleep(duration - (int)elapsed);
+				lastRefresh = DateTime.Now;
+			}
 		}
 
 		public Size Size
@@ -59,34 +67,37 @@ namespace Game
 			var w = new Stopwatch();
 			w.Start();
 
-			var oldFore = Console.ForegroundColor;
-			var oldBack = Console.BackgroundColor;
-			var oldPos = new Point(Console.CursorLeft, Console.CursorTop);
+			var sb = new StringBuilder();
+
+			var line = int.MinValue;
+			var fcolor = ConsoleColor.Black;
+			var bcolor = ConsoleColor.Black;
 
 			frame.Render((brick, point) =>
 			{
-				Console.SetCursorPosition(origin.X + point.X, origin.Y + point.Y);
+				if (origin.X + point.X < 0 || origin.X + point.X >= Console.WindowWidth || origin.Y + point.Y < 0 || origin.Y + point.Y >= Console.WindowHeight - 1)
+					return;
 
-				if(brick == null || brick == Brick.Empty)
+				if (line != point.Y)
+					sb.Append(Escape.Location(origin.X + point.X, origin.Y + (line = point.Y)));
+
+				if (brick == null || brick == Brick.Empty)
 				{
-					//Console.ForegroundColor = ForegroundColor;
-					//Console.BackgroundColor = BackgroundColor;
-					Console.Write(' ');
+					sb.Append(Escape.MoveRight(1));
 				}
 				else
 				{
-					Console.ForegroundColor = brick.ForeColor;
-					Console.BackgroundColor = brick.BackColor;
-					Console.Write(brick.Char);
+					if (fcolor != brick.ForeColor || bcolor != brick.BackColor)
+						sb.Append(Escape.Color(fcolor = brick.ForeColor, bcolor = brick.BackColor));
+
+					sb.Append(brick.Char);
 				}
 			});
 
-			Console.ForegroundColor = oldFore;
-			Console.BackgroundColor = oldBack;
-			Console.SetCursorPosition(oldPos.X, oldPos.Y);
+			ColorConsole.Write(sb.ToString());
 
 			w.Stop();
-			var d = w.ElapsedMilliseconds;
+			var duration = w.ElapsedMilliseconds;
 		}
 
 		public void Draw(Frame frame)

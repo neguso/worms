@@ -22,15 +22,20 @@ namespace Game
 
 		public void Clear()
 		{
+			Fill(null);
+		}
+
+		public void Fill(Brick brick)
+		{
 			for(int x = 0; x < buffer.GetLength(0); x++)
 				for(int y = 0; y < buffer.GetLength(1); y++)
-					buffer[x, y] = null;
+					buffer[x, y] = brick;
 		}
 
 		public void Render(Action<Brick, Point> action)
 		{
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
+			for(int y = 0; y < buffer.GetLength(1); y++)
+				for(int x = 0; x < buffer.GetLength(0); x++)
 					action(buffer[x, y], new Point(x, y));
     }
 

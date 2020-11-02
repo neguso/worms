@@ -6,14 +6,26 @@ using System.Text;
 
 namespace Game
 {
-	public static class Color
+	public static class Escape
 	{
-		public static string Make(ConsoleColor foreground, ConsoleColor background)
-		{
-			var f = new int[] { 30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97 }[(int)foreground];
-			var b = new int[] { 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 }[(int)background];
+		private static int[] ForegroundColorMap = { 30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97 };
+		private static int[] BackgroundColorMap = { 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 };
 
+		public static string Color(ConsoleColor foreground, ConsoleColor background)
+		{
+			var f = ForegroundColorMap[(int)foreground];
+			var b = BackgroundColorMap[(int)background];
 			return $"\x1b[{f};{b}m";
+		}
+
+		public static string Location(int left, int top)
+		{
+			return $"\x1b[{top + 1};{left + 1}H";
+		}
+
+		public static string MoveRight(int n)
+		{
+			return $"\x1b[{n}C";
 		}
 	}
 
@@ -23,23 +35,34 @@ namespace Game
     {
 			Console.Clear();
 			ColorConsole.Enable();
-			var stdout = Console.OpenStandardOutput(120 * 30);
+/*
+			var buffer = new byte[255];
+			for (int i = 0; i < 255; i++)
+				buffer[i] = (byte)i;
+			ColorConsole.Write(buffer);
+			ColorConsole.Write("\xb0");
+Console.ReadLine();
+return;
+*/
 
+/*
+			var stdout = Console.OpenStandardOutput();
 
+			var rnd = new Random();
 			var sb = new StringBuilder();
 
 			//for (int i = 0; i < 16; i++)
 			//	sb.AppendLine($"{i} - {Enum.GetName(typeof(ConsoleColor), i)} - {Color.Make((ConsoleColor)i, ConsoleColor.Black)}text text text text text text text text text text text text text text text text \x1b[39;49m");	
 			
-			var rnd = new Random();
-			for (int y = 0; y < 29; y++)
+			sb.Append(Escape.Location(1, 1));
+			for (int y = 0; y < 28; y++)
 			{
-				for (int x = 0; x < 120; x++)
+				for (int x = 0; x < 118; x++)
 				{
-					sb.Append($"{Color.Make((ConsoleColor)rnd.Next(16), ConsoleColor.Black)}O");
+					sb.Append($"{Escape.Color((ConsoleColor)rnd.Next(16), ConsoleColor.Black)}O");
 					//sb.Append("O");
 				}
-				sb.AppendLine();
+				sb.Append("\x1b[1E\x1b[2G");
 			}
 
 			var text = sb.ToString();
@@ -58,6 +81,7 @@ namespace Game
 
       Console.ReadLine();
       return;
+*/
 
       // menu world //
       //TODO
@@ -111,11 +135,11 @@ namespace Game
         keyboard.Read();
 
         gameWorld.Tick(keyboard);
-        frame.Clear();
+        frame.Fill(Brick.Blank);
         gameWorld.Render(frame);
 
         screen.WaitRefresh();
-        screen.Draw(frame, new Point(0, 0));
+        screen.Draw(frame, new Point(10, 3));
 
         keyboard.Clear();
       }

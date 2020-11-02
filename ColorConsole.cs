@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Game
@@ -26,6 +28,9 @@ namespace Game
         ENABLE_LVB_GRID_WORLDWIDE = 0x0010
     }
 
+
+		private static Stream StandardOutput;
+
 		public static void Enable()
 		{
 			var handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -33,6 +38,19 @@ namespace Game
 			GetConsoleMode(handle, out mode);
 			mode |= (uint)ConsoleOutputModes.ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 			SetConsoleMode(handle, mode);
+
+			StandardOutput = Console.OpenStandardOutput();
+		}
+
+		public static void Write(string text)
+		{
+			var buffer = text.ToCharArray().Select(c => (byte)c).ToArray();
+			StandardOutput.Write(buffer, 0, buffer.Length);
+		}
+
+		public static void Write(byte[] buffer)
+		{
+			StandardOutput.Write(buffer, 0, buffer.Length);
 		}
 	}
 }
