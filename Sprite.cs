@@ -67,6 +67,38 @@ namespace Game
   }
 
 
+	public class Movie
+	{
+		protected Brick[,] buffer;
+
+
+		public Movie(Size size, int length)
+		{
+			
+		}
+
+
+		public void Draw(Frame frame)
+		{
+
+		}
+
+
+	}
+
+
+	public abstract class AnimatedElement : Element
+	{
+		//protected List<
+
+		public AnimatedElement(Point location, Size size) : base(location, size)
+		{
+			
+		}
+	}
+
+
+
   public class ScrollingText : Element
   {
     protected Queue<char> queue;
