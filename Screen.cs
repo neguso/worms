@@ -28,22 +28,9 @@ namespace Game
       }
     }
 
-    private Size _size;
     public Size Size
     {
-      get { return _size; }
-      set
-      {
-        Console.BufferWidth = Console.WindowWidth = value.Width;
-        Console.BufferHeight = Console.WindowHeight = value.Height + 1;
-        _size = new Size(value.Width, value.Height + 1);
-      }
-    }
-
-    public string Title
-    {
-      get => Console.Title;
-      set { Console.Title = value; }
+      get { return ColorConsole.Size; }
     }
 
     public ConsoleColor ForegroundColor
@@ -81,17 +68,17 @@ namespace Game
           return;
 
         if (line != point.Y)
-          sb.Append(Escape.Location(origin.X + point.X, origin.Y + (line = point.Y)));
+          sb.Append(ColorConsole.Escape.Location(origin.X + point.X, origin.Y + (line = point.Y)));
 
         if (brick == null || brick == Brick.Empty)
         {
-          sb.Append(Escape.MoveRight(1));
+          sb.Append(ColorConsole.Escape.MoveRight(1));
           //sb.Append(' ');
         }
         else
         {
           if (fcolor != brick.ForeColor || bcolor != brick.BackColor)
-            sb.Append(Escape.Color(fcolor = brick.ForeColor, bcolor = brick.BackColor));
+            sb.Append(ColorConsole.Escape.Color(fcolor = brick.ForeColor, bcolor = brick.BackColor));
 
           sb.Append(brick.Char);
         }

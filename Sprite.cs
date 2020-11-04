@@ -84,7 +84,8 @@ namespace Game
 		// draw active slide into frame
 		public void Draw(Frame frame, Point location)
 		{
-			//frame.
+			if(Slides.Count > 0)
+				frame.Load(Slides[Active], location);
 		}
 
 		// advance to next slide
@@ -103,7 +104,7 @@ namespace Game
 
 	public abstract class AnimatedElement : Element
 	{
-		//protected List<
+		//Slideshow
 
 		public AnimatedElement(Point location, Size size) : base(location, size)
 		{
@@ -143,6 +144,7 @@ namespace Game
         queue.Enqueue(queue.Dequeue());
     }
   }
+
 
 
   public class TestElement : Element

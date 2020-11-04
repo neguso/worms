@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Game
 {
-	public class GameWorld
+	public class GenericWorld
 	{
 		public List<Player> Players { get; private set; }
 		public List<Element> Elements { get; private set;}
 
 
-		public GameWorld()
+		public GenericWorld()
 		{
 			Players = new List<Player>();
 			Elements = new List<Element>();
@@ -41,7 +41,7 @@ namespace Game
 
 
 
-	public class WormsWorld : GameWorld
+	public class WormsWorld : GenericWorld
 	{
 		public WormsWorld()
 		{

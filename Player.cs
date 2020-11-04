@@ -9,25 +9,45 @@ namespace Game
 
 		public virtual void Process(Command command)
 		{
-
+			// do nothing
 		}
 	}
 
 
 
-	public class Host : Player
+	public class WormsHost : Player
 	{
-		public bool Quit;
+		protected WormsMenu menu;
 
-		public Host()
+		public ActionEnum Action = ActionEnum.None;
+
+
+		public WormsHost(GenericWorld world)
 		{
-				Name = "Host";
-				Quit = false;
+			menu = world.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
 		}
+
 
 		public override void Process(Command command)
 		{
-			Quit = command == Command.Escape;
+			if(command == Command.Escape)
+				Action = ActionEnum.Quit;
+			else if(command == Command.Enter)
+			{
+				switch(menu.Selected.Id)
+				{
+					case "new_game": Action = ActionEnum.NewGame; break;
+					case "quit_game": Action = ActionEnum.Quit; break;
+				}
+			}
+		}
+
+
+		public enum ActionEnum
+		{
+			None,
+			Quit,
+			NewGame
 		}
 	}
 }

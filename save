@@ -1,0 +1,51 @@
+/*
+			for (int i = 0; i < 256; i++)
+			{
+				
+				ColorConsole.Write($"{i:x} - ");
+				ColorConsole.Write(new byte[] { (byte)i, 10, 13 });
+				
+			}
+			Console.ReadKey();
+			return;
+
+			var stdout = Console.OpenStandardOutput();
+
+			var s = new Screen();
+      s.Size = new Size(100, 40);
+
+			var rnd = new Random();
+			var sb = new StringBuilder();
+
+			//for (int i = 0; i < 16; i++)
+			//	sb.AppendLine($"{i} - {Enum.GetName(typeof(ConsoleColor), i)} - {Color.Make((ConsoleColor)i, ConsoleColor.Black)}text text text text text text text text text text text text text text text text \x1b[39;49m");	
+
+			//sb.Append(Escape.Location(0, 0));
+			for (int y = 0; y < 38; y++)
+			{
+				for (int x = 0; x < 99; x++)
+				{
+					sb.Append($"{Escape.Color((ConsoleColor)rnd.Next(16), ConsoleColor.Black)}O");
+					//sb.Append("O");
+				}
+				sb.Append("\x1b[1E\x1b[2G");
+			}
+
+			var text = sb.ToString();
+			var buffer = text.ToCharArray().Select(c => (byte)c).ToArray();
+
+			var w = new Stopwatch();
+			w.Start();
+
+			//Console.Write(text);
+			//stdout.Write(buffer, 0, buffer.Length);
+			ColorConsole.Write(buffer);
+
+			w.Stop();
+			var duration = w.ElapsedMilliseconds;
+
+			Console.Write($"\x1b[{39};{49}m" + duration);
+
+			Console.ReadLine();
+			return;
+*/

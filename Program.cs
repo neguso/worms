@@ -7,98 +7,37 @@ using System.Text;
 
 namespace Game
 {
-  public static class Escape
-  {
-    private static int[] ForegroundColorMap = { 30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97 };
-    private static int[] BackgroundColorMap = { 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 };
-
-    public static string Color(ConsoleColor foreground, ConsoleColor background)
-    {
-      var f = ForegroundColorMap[(int)foreground];
-      var b = BackgroundColorMap[(int)background];
-      return $"\x1b[{f};{b}m";
-    }
-
-    public static string Location(int left, int top)
-    {
-      return $"\x1b[{top + 1};{left + 1}H";
-    }
-
-    public static string MoveRight(int n)
-    {
-      return $"\x1b[{n}C";
-    }
-  }
+  
 
   internal class Program
   {
-    static void Main(string[] args)
+
+		public static void Main(string[] args)
+		{
+			Console.Clear();
+      Console.Title = "The Worms Game";
+			ColorConsole.Enable();
+			ColorConsole.Size = new Size(100, 40);
+
+			Game.Launch();
+
+			//restore size
+			ColorConsole.Disable();
+			//restore title
+		}
+
+/*
+    public static void _Main(string[] args)
     {
       Console.Clear();
       ColorConsole.Enable();
-
 			
 
-/*
-			for (int i = 0; i < 256; i++)
-			{
-				
-				ColorConsole.Write($"{i:x} - ");
-				ColorConsole.Write(new byte[] { (byte)i, 10, 13 });
-				
-			}
-			Console.ReadKey();
-			return;
-
-			var stdout = Console.OpenStandardOutput();
-
-			var s = new Screen();
-      s.Size = new Size(100, 40);
-
-			var rnd = new Random();
-			var sb = new StringBuilder();
-
-			//for (int i = 0; i < 16; i++)
-			//	sb.AppendLine($"{i} - {Enum.GetName(typeof(ConsoleColor), i)} - {Color.Make((ConsoleColor)i, ConsoleColor.Black)}text text text text text text text text text text text text text text text text \x1b[39;49m");	
-
-			//sb.Append(Escape.Location(0, 0));
-			for (int y = 0; y < 38; y++)
-			{
-				for (int x = 0; x < 99; x++)
-				{
-					sb.Append($"{Escape.Color((ConsoleColor)rnd.Next(16), ConsoleColor.Black)}O");
-					//sb.Append("O");
-				}
-				sb.Append("\x1b[1E\x1b[2G");
-			}
-
-			var text = sb.ToString();
-			var buffer = text.ToCharArray().Select(c => (byte)c).ToArray();
-
-			var w = new Stopwatch();
-			w.Start();
-
-			//Console.Write(text);
-			//stdout.Write(buffer, 0, buffer.Length);
-			ColorConsole.Write(buffer);
-
-			w.Stop();
-			var duration = w.ElapsedMilliseconds;
-
-			Console.Write($"\x1b[{39};{49}m" + duration);
-
-			Console.ReadLine();
-			return;
-*/
-
-      // menu world //
-      //TODO
 
 
-      // setup game world //
-      var gameWorld = new GameWorld();
+      var gameWorld = new GenericWorld();
 
-      var host = new Host()
+      var host = new WormsHost()
       {
         KeyMap = new KeyboardKeyMap[]
         {
@@ -151,8 +90,6 @@ namespace Game
       var keyboard = new Keyboard();
 
       var screen = new Screen();
-      screen.Size = new Size(100, 40);
-      screen.Title = "The Worms Game";
       screen.Clear();
 
       var frame = new Frame(screen.Size);
@@ -184,5 +121,106 @@ namespace Game
 			ColorConsole.Disable();
 			Console.Clear();
     }
+*/
+
+		
+
+		public static void RunGame()
+		{
+			
+		}
+
   }
+
+
+	public class Game
+	{
+		protected Keyboard keyboard;
+		protected Screen screen;
+		protected Frame frame;
+
+		protected GenericWorld menuWorld;
+		protected WormsHost host;
+
+
+
+		private Game()
+		{
+			keyboard = new Keyboard();
+      screen = new Screen();
+      frame = new Frame(screen.Size);
+		}
+
+
+		public static void Launch()
+		{
+			new Game().Run();
+		}
+
+
+		public void Run()
+		{
+			RunIntro();
+
+			SetupMenu();
+			RunMenu();
+
+		}
+
+
+		public void RunIntro()
+		{
+			frame.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), new Point(screen.Size.Width / 2 - 24, 5));
+			screen.Draw(frame, new Point(0, 0));
+			Console.ReadKey();
+			screen.Clear();
+		}
+
+		public void SetupMenu()
+		{
+			menuWorld = new GenericWorld();
+
+			host = new WormsHost(menuWorld)
+      {
+        KeyMap = new KeyboardKeyMap[]
+        {
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Escape),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Enter),
+					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
+					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
+				}
+      };
+			//
+      menuWorld.Players.Add(host);
+
+			var menu = new WormsMenu(new Point(10, 10));
+      menu.Players.Add(host);
+			//
+      menuWorld.Elements.Add(menu);
+		}
+
+		public void RunMenu()
+		{
+			do
+      {
+        // get user input
+        keyboard.Clear();
+        keyboard.Read();
+
+        // process world
+        menuWorld.Tick(keyboard);
+
+        // render frame
+        frame.Clear();
+        menuWorld.Render(frame);
+
+        // draw frame on screen
+        screen.WaitRefresh();
+        screen.Draw(frame);
+      }
+      while (host.Action == WormsHost.ActionEnum.None);
+		}
+
+	}
+
 }

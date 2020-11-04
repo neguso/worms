@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Game
 {
@@ -52,6 +53,18 @@ namespace Game
 			StandardOutput.Dispose();
 		}
 
+		private static Size _size;
+    public static Size Size
+    {
+      get { return _size; }
+      set
+      {
+        Console.BufferWidth = Console.WindowWidth = value.Width;
+        Console.BufferHeight = Console.WindowHeight = value.Height + 1;
+        _size = new Size(value.Width, value.Height + 1);
+      }
+    }
+
 
 		private static Dictionary<char, char> _charMap;
 		public static Dictionary<char, char> CharMap
@@ -78,6 +91,31 @@ namespace Game
 		public static void Write(byte[] buffer)
 		{
 			StandardOutput.Write(buffer, 0, buffer.Length);
+		}
+
+
+
+		public static class Escape
+		{
+			private static int[] ForegroundColorMap = { 30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97 };
+			private static int[] BackgroundColorMap = { 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 };
+
+			public static string Color(ConsoleColor foreground, ConsoleColor background)
+			{
+				var f = ForegroundColorMap[(int)foreground];
+				var b = BackgroundColorMap[(int)background];
+				return $"\x1b[{f};{b}m";
+			}
+
+			public static string Location(int left, int top)
+			{
+				return $"\x1b[{top + 1};{left + 1}H";
+			}
+
+			public static string MoveRight(int n)
+			{
+				return $"\x1b[{n}C";
+			}
 		}
 	}
 }
