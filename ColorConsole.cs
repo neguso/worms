@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Game
 {
@@ -49,6 +50,21 @@ namespace Game
 
 			StandardOutput.Close();
 			StandardOutput.Dispose();
+		}
+
+
+		private static Dictionary<char, char> _charMap;
+		public static Dictionary<char, char> CharMap
+		{
+			get
+			{
+				if(_charMap == null)
+				{
+					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"resources\map.txt"));
+					_charMap = new Dictionary<char, char>(map.Select(e => new KeyValuePair<char, char>(e[0], (char)byte.Parse(e.Substring(1), System.Globalization.NumberStyles.HexNumber))));
+				}
+				return _charMap;
+			}
 		}
 
 		//TODO move Size, Title, etc from Screen

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -157,7 +158,7 @@ namespace Game
       var frame = new Frame(screen.Size);
 
 
-			frame.Load(@"C:\Projects\Learning\netcore\worms\resources\banner.txt", new Point(10, 3));
+			frame.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), new Point(10, 3));
 			screen.Draw(frame, new Point(0, 0));
 			Console.ReadKey();
 

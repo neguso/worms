@@ -57,8 +57,6 @@ namespace Game
 		// load file into current frame
 		public void Load(string file, Point location)
 		{
-			var map = File.ReadLines(@"C:\Projects\Learning\netcore\worms\resources\map.txt");
-
 			var lines = File.ReadLines(file, Encoding.UTF8).Take(buffer.GetLength(1)).Select(l => l.Substring(0, Math.Min(buffer.GetLength(0), l.Length))).ToArray();
 			for (int y = 0; y < lines.Count(); y++)
 			{
@@ -67,7 +65,7 @@ namespace Game
 				{
 					int xx = location.X + x, yy = location.Y + y;
 					if(xx >= 0 && xx < buffer.GetLength(0) && yy > 0 && yy < buffer.GetLength(1))
-						buffer[xx, yy] = Brick.From((char)byte.Parse(map.First(s => s.StartsWith(ary[x])).Substring(1), System.Globalization.NumberStyles.HexNumber));
+					buffer[xx, yy] = Brick.From(ColorConsole.CharMap[ary[x]]);
 				}
 			}
 		}
