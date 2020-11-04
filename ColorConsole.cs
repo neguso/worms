@@ -7,16 +7,16 @@ namespace Game
 {
 	public class ColorConsole
 	{
-		const int STD_OUTPUT_HANDLE = -11; //CONOUT$
+		private const int STD_OUTPUT_HANDLE = -11; //CONOUT$
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		static extern IntPtr GetStdHandle(int nStdHandle);
+		private static extern IntPtr GetStdHandle(int nStdHandle);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+    private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+		private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
 		[Flags]
 		private enum ConsoleOutputModes : uint
@@ -29,18 +29,29 @@ namespace Game
     }
 
 
-		private static Stream StandardOutput;
+		private static uint _oldMode = 0;
+		private static Stream StandardOutput = null;
 
 		public static void Enable()
 		{
 			var handle = GetStdHandle(STD_OUTPUT_HANDLE);
-			uint mode = 0;
-			GetConsoleMode(handle, out mode);
-			mode |= (uint)ConsoleOutputModes.ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+			GetConsoleMode(handle, out _oldMode);
+			uint mode = _oldMode | (uint)ConsoleOutputModes.ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 			SetConsoleMode(handle, mode);
 
 			StandardOutput = Console.OpenStandardOutput();
 		}
+
+		public static void Disable()
+		{
+			var handle = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleMode(handle, _oldMode);
+
+			StandardOutput.Close();
+			StandardOutput.Dispose();
+		}
+
+		//TODO move Size, Title, etc from Screen
 
 		public static void Write(string text)
 		{

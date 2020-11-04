@@ -35,7 +35,7 @@ namespace Game
 		public void Render(Frame frame)
 		{
 			Elements.Sort((a, b) => a.ZIndex < b.ZIndex ? -1 : (a.ZIndex > b.ZIndex ? 1 : 0));
-			Elements.ForEach(element => frame.Draw(element, element.Location));
+			Elements.ForEach(element => frame.Load(element, element.Location));
 		}
 	}
 

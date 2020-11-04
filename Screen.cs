@@ -75,7 +75,7 @@ namespace Game
       var fcolor = ConsoleColor.Black;
       var bcolor = ConsoleColor.Black;
 
-      frame.Render((brick, point) =>
+      frame.Scan((brick, point) =>
       {
         if (origin.X + point.X < 0 || origin.X + point.X > Size.Width - 1 || origin.Y + point.Y < 0 || origin.Y + point.Y > Size.Height - 1)
           return;

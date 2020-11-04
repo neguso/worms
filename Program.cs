@@ -36,7 +36,19 @@ namespace Game
       Console.Clear();
       ColorConsole.Enable();
 
+			
+
 /*
+			for (int i = 0; i < 256; i++)
+			{
+				
+				ColorConsole.Write($"{i:x} - ");
+				ColorConsole.Write(new byte[] { (byte)i, 10, 13 });
+				
+			}
+			Console.ReadKey();
+			return;
+
 			var stdout = Console.OpenStandardOutput();
 
 			var s = new Screen();
@@ -144,6 +156,11 @@ namespace Game
 
       var frame = new Frame(screen.Size);
 
+
+			frame.Load(@"C:\Projects\Learning\netcore\worms\resources\banner.txt", new Point(10, 3));
+			screen.Draw(frame, new Point(0, 0));
+			Console.ReadKey();
+
       do
       {
         // get user input
@@ -162,6 +179,9 @@ namespace Game
         screen.Draw(frame, new Point(0, 0));
       }
       while (!host.Quit);
+
+			ColorConsole.Disable();
+			Console.Clear();
     }
   }
 }

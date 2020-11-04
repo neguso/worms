@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Game
 {
@@ -20,6 +23,55 @@ namespace Game
 		}
 
 
+		// scan frame from top to bottom
+		public void Scan(Action<Brick, Point> action)
+		{
+			for(int y = 0; y < buffer.GetLength(1); y++)
+				for(int x = 0; x < buffer.GetLength(0); x++)
+					action(buffer[x, y], new Point(x, y));
+    }
+
+		// load frame into current frame
+		public void Load(Frame frame, Point location)
+		{
+			frame.Scan((brick, point) =>
+			{
+				if(brick == null || brick == Brick.Empty) return;
+
+				SetBrick(new Point(location.X + point.X, location.Y + point.Y), brick);
+			});
+		}
+
+		// load buffer into current frame
+		public void Load(Brick[,] buffer, Point location)
+		{
+			for(int y = 0; y < buffer.GetLength(1); y++)
+				for(int x = 0; x < buffer.GetLength(0); x++)
+				{
+					int xx = location.X + x, yy = location.Y + y;
+					if(xx >= 0 && xx < this.buffer.GetLength(0) && yy > 0 && yy < this.buffer.GetLength(1))
+						this.buffer[xx, yy] = buffer[x, y];
+				}
+		}
+
+		// load file into current frame
+		public void Load(string file, Point location)
+		{
+			var map = File.ReadLines(@"C:\Projects\Learning\netcore\worms\resources\map.txt");
+
+			var lines = File.ReadLines(file, Encoding.UTF8).Take(buffer.GetLength(1)).Select(l => l.Substring(0, Math.Min(buffer.GetLength(0), l.Length))).ToArray();
+			for (int y = 0; y < lines.Count(); y++)
+			{
+				var ary = lines[y].ToCharArray();
+				for (int x = 0; x < ary.Length; x++)
+				{
+					int xx = location.X + x, yy = location.Y + y;
+					if(xx >= 0 && xx < buffer.GetLength(0) && yy > 0 && yy < buffer.GetLength(1))
+						buffer[xx, yy] = Brick.From((char)byte.Parse(map.First(s => s.StartsWith(ary[x])).Substring(1), System.Globalization.NumberStyles.HexNumber));
+				}
+			}
+		}
+
 		public void Clear()
 		{
 			Fill(null);
@@ -31,13 +83,6 @@ namespace Game
 				for(int y = 0; y < buffer.GetLength(1); y++)
 					buffer[x, y] = brick;
 		}
-
-		public void Render(Action<Brick, Point> action)
-		{
-			for(int y = 0; y < buffer.GetLength(1); y++)
-				for(int x = 0; x < buffer.GetLength(0); x++)
-					action(buffer[x, y], new Point(x, y));
-    }
 
 		public void SetBrick(Point point, Brick brick)
 		{
@@ -99,16 +144,6 @@ namespace Game
 			var chars = text.ToCharArray();
 			for(int i = 0; i < chars.Length; i++)
 				SetBrick(new Point(a.X + i, a.Y), Brick.From(chars[i]));
-		}
-
-		public void Draw(Frame frame, Point location)
-		{
-			frame.Render((brick, point) =>
-			{
-				if(brick == null || brick == Brick.Empty) return;
-
-				SetBrick(new Point(location.X + point.X, location.Y + point.Y), brick);
-			});
 		}
 
 	}

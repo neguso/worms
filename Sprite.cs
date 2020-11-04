@@ -18,7 +18,7 @@ namespace Game
 
     public void Draw(Frame frame)
     {
-      Draw(frame, Location);
+      Load(frame, Location);
     }
   }
 
@@ -67,24 +67,38 @@ namespace Game
   }
 
 
-	public class Movie
+
+	public class Slideshow
 	{
-		protected Brick[,] buffer;
+		public List<Brick[,]> Slides { get; private set; }
+		public int Active;
 
 
-		public Movie(Size size, int length)
+		public Slideshow()
 		{
-			
+			Slides = new List<Brick[,]>();
+			Active = -1;
 		}
 
 
-		public void Draw(Frame frame)
+		// draw active slide into frame
+		public void Draw(Frame frame, Point location)
 		{
-
+			//frame.
 		}
 
-
+		// advance to next slide
+		public void Next()
+		{
+			if(Slides.Count > 0)
+			{
+				Active++;
+				if(Active >= Slides.Count)
+					Active = 0;
+			}
+		}
 	}
+
 
 
 	public abstract class AnimatedElement : Element
