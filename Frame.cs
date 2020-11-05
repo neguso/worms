@@ -64,8 +64,8 @@ namespace Game
 				for (int x = 0; x < ary.Length; x++)
 				{
 					int xx = location.X + x, yy = location.Y + y;
-					if(xx >= 0 && xx < buffer.GetLength(0) && yy > 0 && yy < buffer.GetLength(1))
-					buffer[xx, yy] = Brick.From(ColorConsole.CharMap[ary[x]]);
+					if(xx >= 0 && xx < buffer.GetLength(0) && yy >= 0 && yy < buffer.GetLength(1))
+						buffer[xx, yy] = Brick.From(ColorConsole.CharMap[ary[x]]);
 				}
 			}
 		}
@@ -129,19 +129,19 @@ namespace Game
 			HLine(location, size.Width, bricks[0], new Brick[] { corners[0], corners[1] });
 		}
 
-		public void Area(Point a, Size size, Brick brick)
+		public void Area(Point location, Size size, Brick brick)
 		{
 			for(int x = 0; x < size.Width; x++)
 				for(int y = 0; y < size.Height; y++)
-					SetBrick(new Point(a.X + x, a.Y + y), brick);
+					SetBrick(new Point(location.X + x, location.Y + y), brick);
 		}
 
-		public void Text(Point a, string text)
+		public void Text(Point location, string text, ConsoleColor foreground = ConsoleColor.White, ConsoleColor backgound = ConsoleColor.Black)
 		{
 			if(string.IsNullOrEmpty(text)) return;
 			var chars = text.ToCharArray();
 			for(int i = 0; i < chars.Length; i++)
-				SetBrick(new Point(a.X + i, a.Y), Brick.From(chars[i]));
+				SetBrick(new Point(location.X + i, location.Y), Brick.From(chars[i], foreground, backgound));
 		}
 
 	}

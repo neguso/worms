@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Game
 {
-  public abstract class Sprite : Frame
+  public class Sprite : Frame
   {
     public Point Location;
     public int ZIndex;
@@ -24,7 +24,7 @@ namespace Game
 
 
 
-  public abstract class Element : Sprite
+  public class Element : Sprite
   {
     protected Queue<Command> Commands { get; private set; }
 
@@ -63,7 +63,7 @@ namespace Game
       }
     }
 
-    protected abstract void UpdateCore();
+    protected virtual void UpdateCore() { }
   }
 
 

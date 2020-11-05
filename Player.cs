@@ -19,7 +19,7 @@ namespace Game
 	{
 		protected WormsMenu menu;
 
-		public ActionEnum Action = ActionEnum.None;
+		public ActionType Action = ActionType.None;
 
 
 		public WormsHost(GenericWorld world)
@@ -31,19 +31,21 @@ namespace Game
 		public override void Process(Command command)
 		{
 			if(command == Command.Escape)
-				Action = ActionEnum.Quit;
+				Action = ActionType.Quit;
 			else if(command == Command.Enter)
 			{
+				var menu = world.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
+
 				switch(menu.Selected.Id)
 				{
-					case "new_game": Action = ActionEnum.NewGame; break;
-					case "quit_game": Action = ActionEnum.Quit; break;
+					case "new_game": Action = ActionType.NewGame; break;
+					case "quit_game": Action = ActionType.Quit; break;
 				}
 			}
 		}
 
 
-		public enum ActionEnum
+		public enum ActionType
 		{
 			None,
 			Quit,

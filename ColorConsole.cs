@@ -60,8 +60,8 @@ namespace Game
       set
       {
         Console.BufferWidth = Console.WindowWidth = value.Width;
-        Console.BufferHeight = Console.WindowHeight = value.Height + 1;
-        _size = new Size(value.Width, value.Height + 1);
+        Console.BufferHeight = Console.WindowHeight = value.Height;
+        _size = new Size(value.Width, value.Height);
       }
     }
 
