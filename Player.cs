@@ -34,6 +34,7 @@ namespace Game
 				Action = ActionType.Quit;
 			else if(command == Command.Enter)
 			{
+				// search for menu
 				var menu = menuWorld.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
 				switch(menu.Selected.Id)
 				{

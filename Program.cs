@@ -141,7 +141,7 @@ namespace Game
 
 		protected GenericWorld menuWorld;
 		protected WormsHost host;
-
+		protected WormsWorld gameWorld;
 
 
 		private Game()
@@ -163,7 +163,6 @@ namespace Game
 			RunIntro();
 
 			SetupMenu();
-			
 			do
 			{
 				RunMenu();
@@ -241,9 +240,39 @@ namespace Game
       while (host.Action == WormsHost.ActionType.None);
 		}
 
-
 		public void SetupGame()
 		{
+			gameWorld = new WormsWorld();
+
+      var player1 = new Player()
+      {
+        Name = "Player One",
+        KeyMap = new KeyboardKeyMap[]
+        {
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false), Command.Left),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false), Command.Right),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
+        }
+      };
+      gameWorld.Players.Add(player1);
+			//
+			var player2 = new Player()
+      {
+        Name = "Player Two",
+        KeyMap = new KeyboardKeyMap[]
+        {
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.A, false, false, false), Command.Left),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.D, false, false, false), Command.Right),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.W, false, false, false), Command.Up),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.S, false, false, false), Command.Down)
+        }
+      };
+      gameWorld.Players.Add(player2);
+
+
+
+
 
 		}
 

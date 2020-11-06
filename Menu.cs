@@ -80,7 +80,6 @@ namespace Game
           Text(new Point(0, 0 + i), Items[i].Text);
       }
     }
-
   }
 
 
