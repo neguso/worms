@@ -90,7 +90,8 @@ namespace Game
     public WormsMenu(Point location) : base(location, new Size(20, 5))
     {
       Items.AddRange(new MenuItem[] {
-        Selected = new MenuItem("new_game", "New Game"),
+        Selected = new MenuItem("new_game_1", "1 Player"),
+				new MenuItem("new_game_2", "2 Players"),
         new MenuItem("quit_game", "Quit"),
       });
     }

@@ -72,8 +72,9 @@ namespace Game
 
         if (brick == null || brick == Brick.Empty)
         {
-          sb.Append(ColorConsole.Escape.MoveRight(1));
-          //sb.Append(' ');
+          //sb.Append(ColorConsole.Escape.MoveRight(1));
+          sb.Append(ColorConsole.Escape.Color(ConsoleColor.White, ConsoleColor.Black));
+          sb.Append(' ');
         }
         else
         {

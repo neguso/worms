@@ -7,220 +7,128 @@ using System.Text;
 
 namespace Game
 {
-  
-
   internal class Program
   {
-
-		public static void Main(string[] args)
-		{
-			Console.Clear();
-      Console.Title = "The Worms Game";
-			ColorConsole.Enable();
-			ColorConsole.Size = new Size(100, 40);
-
-			Game.Launch();
-
-			//restore size
-			ColorConsole.Disable();
-			//restore title
-		}
-
-/*
-    public static void _Main(string[] args)
+    public static void Main(string[] args)
     {
       Console.Clear();
+      Console.Title = "The Worms Game";
       ColorConsole.Enable();
-			
+      ColorConsole.Size = new Size(100, 40);
 
+      WormsGame.Launch();
 
-
-      var gameWorld = new GenericWorld();
-
-      var host = new WormsHost()
-      {
-        KeyMap = new KeyboardKeyMap[]
-        {
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Escape),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Enter),
-					//new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-					//new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down),
-				}
-      };
-      gameWorld.Players.Add(host);
-
-      var playerOne = new Player()
-      {
-        Name = "Player One",
-        KeyMap = new KeyboardKeyMap[]
-        {
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false), Command.Left),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false), Command.Right),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
-        }
-      };
-      gameWorld.Players.Add(playerOne);
-			//
-			var playerTwo = new Player()
-      {
-        Name = "Player Two",
-        KeyMap = new KeyboardKeyMap[]
-        {
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.A, false, false, false), Command.Left),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.D, false, false, false), Command.Right),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.W, false, false, false), Command.Up),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.S, false, false, false), Command.Down)
-        }
-      };
-      gameWorld.Players.Add(playerTwo);
-
-
-      var el11 = new TestElement();
-      gameWorld.Elements.Add(el11);
-      el11.Players.Add(playerOne);
-
-			var el12 = new TestElement();
-      gameWorld.Elements.Add(el12);
-      el12.Players.Add(playerTwo);
-
-			var el2 = new ScrollingText("Quick brown fox jumps over the lazy dog!", new Point(20, 10), 100);
-			gameWorld.Elements.Add(el2);
-
-      var keyboard = new Keyboard();
-
-      var screen = new Screen();
-      screen.Clear();
-
-      var frame = new Frame(screen.Size);
-
-
-			frame.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), new Point(10, 3));
-			screen.Draw(frame, new Point(0, 0));
-			Console.ReadKey();
-
-      do
-      {
-        // get user input
-        keyboard.Clear();
-        keyboard.Read();
-
-        // process world
-        gameWorld.Tick(keyboard);
-
-        // render frame
-        frame.Fill(Brick.Blank);
-        gameWorld.Render(frame);
-
-        // draw frame on screen
-        screen.WaitRefresh();
-        screen.Draw(frame, new Point(0, 0));
-      }
-      while (!host.Quit);
-
-			ColorConsole.Disable();
-			Console.Clear();
+      //restore size
+      ColorConsole.Disable();
+      //restore title
     }
-*/
-
-		
-
-		public static void RunGame()
-		{
-			
-		}
-
   }
 
 
-	public class Game
-	{
-		protected Keyboard keyboard;
-		protected Screen screen;
-		protected Frame frame;
+  public class WormsGame
+  {
+    protected Keyboard keyboard;
+    protected Screen screen;
+    protected Frame frame;
 
-		protected GenericWorld menuWorld;
-		protected WormsHost host;
-		protected WormsWorld gameWorld;
+    protected GenericWorld menuWorld;
+    protected WormsWorld gameWorld;
+    protected WormsHost host;
 
 
-		private Game()
-		{
-			keyboard = new Keyboard();
+    private WormsGame()
+    {
+      keyboard = new Keyboard();
       screen = new Screen();
       frame = new Frame(screen.Size);
-		}
+    }
 
 
-		public static void Launch()
-		{
-			new Game().Run();
-		}
+    public static void Launch()
+    {
+      new WormsGame().Run();
+    }
 
 
-		public void Run()
-		{
-			RunIntro();
+    public void Run()
+    {
+      RunIntro();
 
-			SetupMenu();
-			do
-			{
-				RunMenu();
+      SetupMenu();
+      do
+      {
+        RunMenu();
 
-				switch(host.Action)
-				{
-					case WormsHost.ActionType.NewGame:
-						SetupGame();
-						RunGame();
-						break;
-				}
-				
-			}
-			while(host.Action != WormsHost.ActionType.Quit);
-		}
+        switch (host.Action)
+        {
+					case WormsHost.ActionType.NewGame1:
+          case WormsHost.ActionType.NewGame2:
+            SetupGame(host.Action == WormsHost.ActionType.NewGame1 ? 1 : 2);
+            RunGame();
+
+            if (gameWorld.Alive)
+            {
+              if (gameWorld.Completed)
+              {
+                // game finished
+              }
+            }
+            else
+            {
+              // game over
+            }
+
+            break;
+
+        }
+      }
+      while (host.Action != WormsHost.ActionType.Quit);
+    }
 
 
-		public void RunIntro()
-		{
-			frame.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), new Point(screen.Size.Width / 2 - 24, 10));
-			frame.Text(new Point(38, 20), "Awesome game with worms.");
-			frame.Text(new Point(39, 32), "Press any key to start");
-			screen.Draw(frame, new Point(0, 0));
-			Console.ReadKey();
-			screen.Clear();
-		}
+    public void RunIntro()
+    {
+      frame.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), new Point(screen.Size.Width / 2 - 24, 10));
+      frame.Text(new Point(38, 20), "Awesome game with worms.");
+      frame.Text(new Point(39, 32), "Press any key to start");
+      screen.Draw(frame, new Point(0, 0));
+      Console.ReadKey();
+      screen.Clear();
+    }
 
-		public void SetupMenu()
-		{
-			menuWorld = new GenericWorld();
+    public void SetupMenu()
+    {
+      menuWorld = new GenericWorld();
 
-			host = new WormsHost(menuWorld)
+      host = new WormsHost(menuWorld)
       {
         KeyMap = new KeyboardKeyMap[]
         {
           new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Escape),
           new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false), Command.Enter),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
-				}
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
+          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
+        }
       };
-			//
+      //
       menuWorld.Players.Add(host);
 
-			var logo = new Element(new Point(screen.Size.Width / 2 - 24, 10), new Size(48, 9));
-			logo.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), Point.Empty);
-			//
-			menuWorld.Elements.Add(logo);
+      var logo = new Element(new Point(screen.Size.Width / 2 - 24, 10), new Size(48, 9));
+      logo.Load(Path.Combine(Environment.CurrentDirectory, @"resources\banner.txt"), Point.Empty);
+      //
+      menuWorld.Elements.Add(logo);
 
-			var menu = new WormsMenu(new Point(screen.Size.Width / 2 - 8, 25));
+      var menu = new WormsMenu(new Point(screen.Size.Width / 2 - 8, 25));
       menu.Players.Add(host);
-			//
+      //
       menuWorld.Elements.Add(menu);
-		}
+    }
 
-		public void RunMenu()
-		{
-			do
+    public void RunMenu()
+    {
+      host.Action = WormsHost.ActionType.None;
+
+      do
       {
         // get user input
         keyboard.Clear();
@@ -238,49 +146,36 @@ namespace Game
         screen.Draw(frame);
       }
       while (host.Action == WormsHost.ActionType.None);
-		}
 
-		public void SetupGame()
-		{
-			gameWorld = new WormsWorld();
+      screen.Clear();
+    }
 
-      var player1 = new Player()
+    public void SetupGame(int players)
+    {
+      gameWorld = new WormsWorld(screen.Size, players);
+    }
+
+    public void RunGame()
+    {
+      do
       {
-        Name = "Player One",
-        KeyMap = new KeyboardKeyMap[]
-        {
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false), Command.Left),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false), Command.Right),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
-        }
-      };
-      gameWorld.Players.Add(player1);
-			//
-			var player2 = new Player()
-      {
-        Name = "Player Two",
-        KeyMap = new KeyboardKeyMap[]
-        {
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.A, false, false, false), Command.Left),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.D, false, false, false), Command.Right),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.W, false, false, false), Command.Up),
-          new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.S, false, false, false), Command.Down)
-        }
-      };
-      gameWorld.Players.Add(player2);
+        // get user input
+        keyboard.Clear();
+        keyboard.Read();
 
+        // process world
+        gameWorld.Tick(keyboard);
 
+        // render frame
+        frame.Clear();
+        gameWorld.Render(frame);
 
+        // draw frame on screen
+        screen.WaitRefresh();
+        screen.Draw(frame);
+      }
+      while (gameWorld.Alive && !gameWorld.Completed);
+    }
 
-
-		}
-
-		public void RunGame()
-		{
-
-		}
-
-	}
-
+  }
 }
