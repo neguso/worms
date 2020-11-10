@@ -11,10 +11,7 @@ namespace Game
     public int Score;
     public KeyboardKeyMap[] KeyMap;
 
-    public virtual void Process(Command command)
-    {
-      // do nothing
-    }
+    public virtual void Process(Command command) { }
   }
 
 
@@ -43,7 +40,7 @@ namespace Game
         switch (menu.Selected.Id)
         {
           case "new_game_1": Action = ActionType.NewGame1; break;
-					case "new_game_2": Action = ActionType.NewGame2; break;
+          case "new_game_2": Action = ActionType.NewGame2; break;
           case "quit_game": Action = ActionType.Quit; break;
         }
       }
@@ -55,7 +52,7 @@ namespace Game
       None,
       Quit,
       NewGame1,
-			NewGame2
+      NewGame2
     }
   }
 }

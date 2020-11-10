@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace Game
@@ -214,28 +215,28 @@ namespace Game
   }
 
 
-	public class LevelBox : Element
-	{
-		protected WormsWorld world;
+  public class LevelBox : Element
+  {
+    protected WormsWorld world;
 
-		public LevelBox(WormsWorld world, Point location, int width) : base(location, new Size(width, 1))
+    public LevelBox(WormsWorld world, Point location, int width) : base(location, new Size(width, 1))
     {
       this.world = world;
     }
 
-		protected override void UpdateCore()
+    protected override void UpdateCore()
     {
-			Text(Point.Empty, "Level " + world.Level.Level);
-		}
-	}
+      Text(Point.Empty, "Level " + world.Level.Level);
+    }
+  }
 
 
 
   public class Arena : Element
   {
-    public Arena(string file, Point location, Size size) : base(location, size)
+    public Arena(string path, Point location, Size size) : base(location, size)
     {
-      Load(file, Point.Empty);
+      Load(Path.Combine(path, "arena.txt"), Point.Empty);
     }
 
     public override List<Point> GetBody()
@@ -258,12 +259,11 @@ namespace Game
     public int Grow;
 
 
-    public Worm(Player player, Size size) : base(Point.Empty, size)
+    public Worm(Player player, Size size, Point start, DirectionEnum direction) : base(Point.Empty, size)
     {
       Players.Add(player);
-      Body = new List<Point>();
-      Body.Add(new Point(size.Width / 2, size.Height / 2));
-      Direction = DirectionEnum.Right;
+      Body = new List<Point>() { start };
+      Direction = direction;
       Grow = 2;
     }
 
@@ -336,16 +336,16 @@ namespace Game
       for (int i = 0; i < Body.Count; i++)
         SetBrick(Body[i], Brick.From(ColorConsole.CharMap['▓'], Player.Color));
     }
-
-
-    public enum DirectionEnum
-    {
-      Left,
-      Right,
-      Up,
-      Down
-    }
   }
+
+
+	public enum DirectionEnum //TODO: rename
+	{
+		Left,
+		Right,
+		Up,
+		Down
+	}
 
 
   public class TestElement : Element

@@ -1,0 +1,7 @@
+food = 10
+
+player_1_start = 1, 20
+player_1_direction = Right
+
+player_2_start = 98, 20
+player_2_direction = Left

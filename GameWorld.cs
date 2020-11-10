@@ -129,14 +129,20 @@ namespace Game
         //
         var score2 = new ScoreBox(player2, new Point(Size.Width - 23, 0), player2.Name.Length + 15);
         Elements.Add(score2);
-
-				var level = new LevelBox(this, new Point(Size.Width / 2 - 4, 0), 7);
-				Elements.Add(level);
+      }
+      if (players > 2)
+      {
+        //TODO
       }
 
-      Levels.Add(new WorldLevel(this, 1, Path.Combine(Environment.CurrentDirectory, @"resources\level1.txt"), 3));
-      Levels.Add(new WorldLevel(this, 2, Path.Combine(Environment.CurrentDirectory, @"resources\level2.txt"), 3));
-      //...
+      var level = new LevelBox(this, new Point(Size.Width / 2 - 4, 0), 7);
+      Elements.Add(level);
+
+
+      // levels
+      Levels.Add(new WorldLevel(this, 1,new WorldLevel.LevelConfig(@"resources\level1")));
+			Levels.Add(new WorldLevel(this, 2,new WorldLevel.LevelConfig(@"resources\level2")));
+			Levels.Add(new WorldLevel(this, 3,new WorldLevel.LevelConfig(@"resources\level3")));
 
       NextLevel();
     }
@@ -159,6 +165,7 @@ namespace Game
     {
       public WormsWorld World { get; private set; }
       public int Level { get; private set; }
+      public LevelConfig Config;
 
 
       protected Arena Arena;
@@ -167,11 +174,12 @@ namespace Game
       protected Food Food;
 
 
-      public WorldLevel(WormsWorld world, int level, string file, int foodStock)
+      public WorldLevel(WormsWorld world, int level, LevelConfig config)
       {
         World = world;
         Level = level;
-        FoodStock = foodStock;
+        Config = config;
+        FoodStock = config.Food + 1;
         Worms = new List<Worm>();
       }
 
@@ -180,11 +188,14 @@ namespace Game
 
       public void Install()
       {
-        Arena = new Arena(Path.Combine(Environment.CurrentDirectory, @$"resources\level{Level}.txt"), new Point(0, 1), new Size(World.Size.Width, World.Size.Height - 1));
+        Arena = new Arena(Config.DataFolder, new Point(0, 1), new Size(World.Size.Width, World.Size.Height - 1));
         World.Elements.Add(Arena);
 
         foreach (var player in World.Players.Where(p => p.Lives > 0))
-          Worms.Add(new Worm(player, World.Size));
+        {
+          var playerConfig = Config.Players[World.Players.IndexOf(player)];
+          Worms.Add(new Worm(player, World.Size, playerConfig.Start, playerConfig.Direction));
+        }
         World.Elements.AddRange(Worms);
 
         Food = new Food(Point.Empty);
@@ -207,8 +218,8 @@ namespace Game
       public Point RandomLocation()
       {
         var list = new List<Point>();
-        for (int x = 0; x < Arena.Size.Width; x++)
-          for (int y = 0; y < Arena.Size.Height; y++)
+        for (int x = Arena.Location.X; x < Arena.Size.Width; x++)
+          for (int y = Arena.Location.Y; y < Arena.Size.Height; y++)
             if (World.Elements.All(e => e.GetBrick(new Point(x - e.Location.X, y - e.Location.Y)) == null))
               list.Add(new Point(x, y));
         var rnd = new Random();
@@ -226,12 +237,12 @@ namespace Game
 
       public virtual void Tick()
       {
-        // if worm collide with food
         foreach (var worm in Worms.Where(w => w.Enabled))
         {
           if (worm.Collisions(Food).Count > 0)
           {
-						worm.Player.Score += 1;
+						// if worm collide with food
+            worm.Player.Score += 1;
             worm.Grow += 5;
             PlaceFood();
           }
@@ -245,14 +256,67 @@ namespace Game
               worm.Enabled = false;
 
             // if worm collide with himself
-
+            //TODO:
 
             // if worm colide with other worms
+            //TODO:
 
           }
         }
+      }
 
 
+      public class LevelConfig
+      {
+        public string DataFolder;
+        public int Food;
+        public PlayerConfig[] Players;
+
+        public LevelConfig() { }
+
+        public LevelConfig(string path)
+        {
+          DataFolder = path;
+					Players = new PlayerConfig[] { new PlayerConfig(), new PlayerConfig() };
+
+					File.ReadAllLines(Path.Combine(path, "settings.txt")).Where(l => !string.IsNullOrWhiteSpace(l) && !l.StartsWith("#")).ToList().ForEach(line => {
+						var ary = line.Split("=");
+						string option = ary[0].Trim(), value = ary[1].Trim();
+						if(option == "food")
+							Food = int.Parse(value);
+						else if(option.StartsWith("player_1_"))
+						{
+							if(option == "player_1_start")
+							{
+								var p = value.Split(",");
+								Players[0].Start = new Point(int.Parse(p[0]), int.Parse(p[1]));
+							}
+							else if(option == "player_1_direction")
+								Players[0].Direction = Enum.Parse<DirectionEnum>(value);
+						}
+						else if(option.StartsWith("player_2_"))
+						{
+							if(Players.Length < 1)
+							{
+								Array.Resize(ref Players, 2);
+								Players[1] = new PlayerConfig();
+							}
+							if(option == "player_2_start")
+							{
+								var p = value.Split(",");
+								Players[1].Start = new Point(int.Parse(p[0]), int.Parse(p[1]));
+							}
+							else if(option == "player_2_direction")
+								Players[1].Direction = Enum.Parse<DirectionEnum>(value);
+						}
+					});
+        }
+      }
+
+      public class PlayerConfig
+      {
+        public Point Start;
+        public DirectionEnum Direction;
       }
     }
 
