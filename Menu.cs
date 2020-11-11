@@ -34,35 +34,35 @@ namespace Game
 
 		protected void SelectPrev()
 		{
-			if (Items.Count > 1)
+			if(Items.Count > 1)
 			{
 				var i = Items.IndexOf(Selected);
-				if (i > 0)
+				if(i > 0)
 					Selected = Items[i - 1];
 			}
 		}
 
 		protected void SelectNext()
 		{
-			if (Items.Count > 1)
+			if(Items.Count > 1)
 			{
 				var i = Items.IndexOf(Selected);
-				if (i < Items.Count - 1)
+				if(i < Items.Count - 1)
 					Selected = Items[i + 1];
 			}
 		}
 
 		protected override void UpdateCore()
 		{
-			if (Commands.Count > 0)
+			if(Commands.Count > 0)
 			{
 				// get next command
 				var command = Commands.Dequeue();
 
 				// act on command
-				if (command == Command.Up)
+				if(command == Command.Up)
 					SelectPrev();
-				else if (command == Command.Down)
+				else if(command == Command.Down)
 					SelectNext();
 			}
 
@@ -72,9 +72,9 @@ namespace Game
 
 		protected virtual void Draw()
 		{
-			for (int i = 0; i < Items.Count; i++)
+			for(int i = 0; i < Items.Count; i++)
 			{
-				if (Items[i] == Selected)
+				if(Items[i] == Selected)
 					Text(new Point(0, 0 + i), Items[i].Text, ConsoleColor.Black, ConsoleColor.White);
 				else
 					Text(new Point(0, 0 + i), Items[i].Text);
@@ -99,11 +99,11 @@ namespace Game
 
 		protected override void Draw()
 		{
-			for (int i = 0; i < Items.Count; i++)
+			for(int i = 0; i < Items.Count; i++)
 			{
 				var text = Items[i].Text;
 
-				if (Items[i] == Selected)
+				if(Items[i] == Selected)
 				{
 					text = " \xaf " + text + " \xae ";
 					text = text.PadLeft(Size.Width / 2 + text.Length / 2).PadRight(Size.Width);

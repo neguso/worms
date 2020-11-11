@@ -25,15 +25,15 @@ namespace Game
 
 		public void Draw(Frame frame)
 		{
-			if (Enabled && Visible)
+			if(Enabled && Visible)
 				frame.Load(this, Location);
 		}
 
 		public virtual List<Point> GetBody()
 		{
 			var list = new List<Point>(buffer.GetLength(0) * buffer.GetLength(1));
-			for (int x = 0; x < buffer.GetLength(0); x++)
-				for (int y = 0; y < buffer.GetLength(1); y++)
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
 					list.Add(new Point(Location.X + x, Location.Y + y));
 			return list;
 		}
@@ -49,10 +49,10 @@ namespace Game
 		{
 			public bool Equals(Point a, Point b)
 			{
-				if (ReferenceEquals(a, b)) return true;
-				if (ReferenceEquals(a, null)) return false;
-				if (ReferenceEquals(b, null)) return false;
-				if (a.GetType() != b.GetType()) return false;
+				if(ReferenceEquals(a, b)) return true;
+				if(ReferenceEquals(a, null)) return false;
+				if(ReferenceEquals(b, null)) return false;
+				if(a.GetType() != b.GetType()) return false;
 				return a.X == b.X && a.Y == b.Y;
 			}
 
@@ -92,15 +92,15 @@ namespace Game
 
 		public virtual void Process(Command command)
 		{
-			if (Enabled)
+			if(Enabled)
 				Commands.Enqueue(command);
 		}
 
 		public virtual void Update()
 		{
-			if (UpdatePending)
+			if(UpdatePending)
 			{
-				if (Enabled)
+				if(Enabled)
 					UpdateCore();
 				LastUpdated = DateTime.Now;
 			}
@@ -127,17 +127,17 @@ namespace Game
 		// draw active slide into frame
 		public void Draw(Frame frame, Point location)
 		{
-			if (Slides.Count > 0)
+			if(Slides.Count > 0)
 				frame.Load(Slides[Active], location);
 		}
 
 		// advance to next slide
 		public void Next()
 		{
-			if (Slides.Count > 0)
+			if(Slides.Count > 0)
 			{
 				Active++;
-				if (Active >= Slides.Count)
+				if(Active >= Slides.Count)
 					Active = 0;
 			}
 		}
@@ -168,7 +168,7 @@ namespace Game
 			UpdateInterval = 0;
 
 			queue = new Queue<char>(label.ToCharArray());
-			while (queue.Count < Size.Width)
+			while(queue.Count < Size.Width)
 				queue.Enqueue(' ');
 		}
 
@@ -183,7 +183,7 @@ namespace Game
 			Text(Point.Empty, text.Substring(0, Math.Min(text.Length, Size.Width)));
 
 			// shift text
-			for (int i = 0; i < Step; i++)
+			for(int i = 0; i < Step; i++)
 				queue.Enqueue(queue.Dequeue());
 		}
 	}
@@ -203,11 +203,11 @@ namespace Game
 		{
 			Text(Point.Empty, player.Name, player.Color);
 			var lives = "";
-			for (int i = 0; i < player.Lives; i++)
+			for(int i = 0; i < player.Lives; i++)
 				lives += ColorConsole.CharMap['♥'];
 			Text(new Point(player.Name.Length + 1, 0), lives, ConsoleColor.Red);
 			var deaths = "";
-			for (int i = player.Lives; i < 5; i++)
+			for(int i = player.Lives; i < 5; i++)
 				deaths += ColorConsole.CharMap['♥'];
 			Text(new Point(player.Name.Length + 1 + player.Lives, 0), deaths, ConsoleColor.DarkGray);
 			Text(new Point(player.Name.Length + 7, 0), ColorConsole.CharMap['►'] + " " + player.Score.ToString().PadLeft(4, '0'), player.Color);
@@ -242,9 +242,9 @@ namespace Game
 		public override List<Point> GetBody()
 		{
 			var list = new List<Point>();
-			for (int x = 0; x < buffer.GetLength(0); x++)
-				for (int y = 0; y < buffer.GetLength(1); y++)
-					if (buffer[x, y] != null)
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
+					if(buffer[x, y] != null)
 						list.Add(new Point(Location.X + x, Location.Y + y));
 			return list;
 		}
@@ -292,12 +292,12 @@ namespace Game
 			var head = Body[0];
 			var tail = Body[Body.Count - 1];
 
-			if (Grow > 0)
+			if(Grow > 0)
 				Grow--;
 			else
 				Body.Remove(tail);
 
-			switch (Direction)
+			switch(Direction)
 			{
 				case MovingDirection.Left: Body.Insert(0, new Point(head.X - 1, head.Y)); break;
 				case MovingDirection.Right: Body.Insert(0, new Point(head.X + 1, head.Y)); break;
@@ -308,36 +308,36 @@ namespace Game
 
 		public void Steer(MovingDirection direction)
 		{
-			switch (direction)
+			switch(direction)
 			{
-				case MovingDirection.Left: if (Direction != MovingDirection.Right) Direction = direction; break;
-				case MovingDirection.Right: if (Direction != MovingDirection.Left) Direction = direction; break;
-				case MovingDirection.Up: if (Direction != MovingDirection.Down) Direction = direction; break;
-				case MovingDirection.Down: if (Direction != MovingDirection.Up) Direction = direction; break;
+				case MovingDirection.Left: if(Direction != MovingDirection.Right) Direction = direction; break;
+				case MovingDirection.Right: if(Direction != MovingDirection.Left) Direction = direction; break;
+				case MovingDirection.Up: if(Direction != MovingDirection.Down) Direction = direction; break;
+				case MovingDirection.Down: if(Direction != MovingDirection.Up) Direction = direction; break;
 			}
 		}
 
 		protected override void UpdateCore()
 		{
-			if (Commands.Count > 0)
+			if(Commands.Count > 0)
 			{
 				// get next command
 				var command = Commands.Dequeue();
 
-				if (command == Command.Left)
+				if(command == Command.Left)
 					Steer(MovingDirection.Left);
-				else if (command == Command.Right)
+				else if(command == Command.Right)
 					Steer(MovingDirection.Right);
-				else if (command == Command.Up)
+				else if(command == Command.Up)
 					Steer(MovingDirection.Up);
-				else if (command == Command.Down)
+				else if(command == Command.Down)
 					Steer(MovingDirection.Down);
 			}
 
 			Move();
 
 			Clear();
-			for (int i = 0; i < Body.Count; i++)
+			for(int i = 0; i < Body.Count; i++)
 				SetBrick(Body[i], Brick.From(ColorConsole.CharMap['▓'], Player.Color));
 		}
 	}

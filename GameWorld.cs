@@ -28,7 +28,7 @@ namespace Game
 			Players.ForEach(player =>
 			{
 				var command = keyboard.DequeueCommand(player);
-				if (command != null)
+				if(command != null)
 				{
 					player.Process(command);
 					var list = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
@@ -66,7 +66,7 @@ namespace Game
 		{
 			get
 			{
-				if (CurrentLevel >= 0 && CurrentLevel < Levels.Count)
+				if(CurrentLevel >= 0 && CurrentLevel < Levels.Count)
 					return Levels[CurrentLevel];
 				return null;
 			}
@@ -79,7 +79,7 @@ namespace Game
 			base.Tick(keyboard);
 
 			Level.Tick();
-			if (Level.Finished)
+			if(Level.Finished)
 				NextLevel();
 		}
 
@@ -93,7 +93,7 @@ namespace Game
 				Index = 1,
 				Name = "Player One",
 				Color = ConsoleColor.Blue,
-				Lives = 5,
+				Lives = 1,
 				Score = 0,
 				KeyMap = new KeyboardKeyMap[]
 				{
@@ -108,7 +108,7 @@ namespace Game
 			var score1 = new ScoreBox(player1, new Point(0, 0), player1.Name.Length + 15);
 			Elements.Add(score1);
 
-			if (players > 1)
+			if(players > 1)
 			{
 				var player2 = new Player()
 				{
@@ -130,7 +130,7 @@ namespace Game
 				var score2 = new ScoreBox(player2, new Point(Size.Width - 23, 0), player2.Name.Length + 15);
 				Elements.Add(score2);
 			}
-			if (players > 2)
+			if(players > 2)
 			{
 				//TODO
 			}
@@ -149,12 +149,12 @@ namespace Game
 
 		public void NextLevel()
 		{
-			if (Level != null)
+			if(Level != null)
 				Level.Uninstall();
 
 			CurrentLevel++;
 
-			if (Level != null)
+			if(Level != null)
 				Level.Install();
 		}
 
@@ -191,7 +191,7 @@ namespace Game
 				Arena = new Arena(Config.DataFolder, new Point(0, 1), new Size(World.Size.Width, World.Size.Height - 1));
 				World.Elements.Add(Arena);
 
-				foreach (var player in World.Players.Where(p => p.Lives > 0))
+				foreach(var player in World.Players.Where(p => p.Lives > 0))
 				{
 					var playerConfig = Config.Players[World.Players.IndexOf(player)];
 					Worms.Add(new Worm(player, World.Size, playerConfig.Start, playerConfig.Direction));
@@ -207,7 +207,7 @@ namespace Game
 			{
 				World.Elements.Remove(Arena);
 
-				foreach (var worm in Worms)
+				foreach(var worm in Worms)
 					World.Elements.Remove(worm);
 				Worms.Clear();
 
@@ -218,9 +218,9 @@ namespace Game
 			public Point RandomLocation()
 			{
 				var list = new List<Point>();
-				for (int x = Arena.Location.X; x < Arena.Size.Width; x++)
-					for (int y = Arena.Location.Y; y < Arena.Size.Height; y++)
-						if (World.Elements.All(e => e.GetBrick(new Point(x - e.Location.X, y - e.Location.Y)) == null))
+				for(int x = Arena.Location.X; x < Arena.Size.Width; x++)
+					for(int y = Arena.Location.Y; y < Arena.Size.Height; y++)
+						if(World.Elements.All(e => e.GetBrick(new Point(x - e.Location.X, y - e.Location.Y)) == null))
 							list.Add(new Point(x, y));
 				var rnd = new Random();
 				return list[rnd.Next(list.Count)];
@@ -228,7 +228,7 @@ namespace Game
 
 			public void PlaceFood()
 			{
-				if (FoodStock > 0)
+				if(FoodStock > 0)
 				{
 					Food.Location = RandomLocation();
 					FoodStock--;
@@ -237,20 +237,20 @@ namespace Game
 
 			public virtual void Tick()
 			{
-				foreach (var worm in Worms.Where(w => w.Enabled))
+				foreach(var worm in Worms.Where(w => w.Enabled))
 				{
-					if (worm.Collisions(Food).Count > 0)
+					if(worm.Collisions(Food).Count > 0)
 					{
 						// if worm collide with food
 						worm.Player.Score += worm.Body.Count;
 						worm.Grow += Food.Weight;
 						PlaceFood();
 					}
-					else if (worm.Collisions(Arena).Count > 0)
+					else if(worm.Collisions(Arena).Count > 0)
 					{
 						// if worm collide with arena
 						worm.Player.Lives--;
-						if (worm.Player.Lives > 0)
+						if(worm.Player.Lives > 0)
 							worm.Reset();
 						else
 							worm.Enabled = false;
@@ -283,31 +283,31 @@ namespace Game
 					{
 						var ary = line.Split("=");
 						string option = ary[0].Trim(), value = ary[1].Trim();
-						if (option == "food")
+						if(option == "food")
 							Food = int.Parse(value);
-						else if (option.StartsWith("player_1_"))
+						else if(option.StartsWith("player_1_"))
 						{
-							if (option == "player_1_start")
+							if(option == "player_1_start")
 							{
 								var p = value.Split(",");
 								Players[0].Start = new Point(int.Parse(p[0]), int.Parse(p[1]));
 							}
-							else if (option == "player_1_direction")
+							else if(option == "player_1_direction")
 								Players[0].Direction = Enum.Parse<MovingDirection>(value);
 						}
-						else if (option.StartsWith("player_2_"))
+						else if(option.StartsWith("player_2_"))
 						{
-							if (Players.Length < 1)
+							if(Players.Length < 1)
 							{
 								Array.Resize(ref Players, 2);
 								Players[1] = new PlayerConfig();
 							}
-							if (option == "player_2_start")
+							if(option == "player_2_start")
 							{
 								var p = value.Split(",");
 								Players[1].Start = new Point(int.Parse(p[0]), int.Parse(p[1]));
 							}
-							else if (option == "player_2_direction")
+							else if(option == "player_2_direction")
 								Players[1].Direction = Enum.Parse<MovingDirection>(value);
 						}
 					});

@@ -34,7 +34,7 @@ namespace Game
 		/// </summary>
 		public override void Read()
 		{
-			while (Console.KeyAvailable)
+			while(Console.KeyAvailable)
 				Buffer.Add(Console.ReadKey(true));
 		}
 
@@ -44,7 +44,7 @@ namespace Game
 		public override Command DequeueCommand(Player player)
 		{
 			var key = Buffer.FirstOrDefault(key => player.KeyMap.FirstOrDefault(map => map.Key.Key == key.Key) != null);
-			if (key.Key != 0)
+			if(key.Key != 0)
 			{
 				Buffer.Remove(key);
 				return player.KeyMap.First(map => map.Key.Key == key.Key).Command;

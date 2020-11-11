@@ -19,10 +19,10 @@ namespace Game
 
 		public void WaitRefresh(double duration = 16.66667) // 60Hz
 		{
-			if (WaitForRefresh)
+			if(WaitForRefresh)
 			{
 				double elapsed = (DateTime.Now - lastRefresh).TotalMilliseconds;
-				if (elapsed < duration)
+				if(elapsed < duration)
 					System.Threading.Thread.Sleep((int)(duration - elapsed));
 				lastRefresh = DateTime.Now;
 			}
@@ -64,21 +64,21 @@ namespace Game
 
 			frame.Scan((brick, point) =>
 			{
-				if (origin.X + point.X < 0 || origin.X + point.X > Size.Width - 1 || origin.Y + point.Y < 0 || origin.Y + point.Y > Size.Height - 1)
+				if(origin.X + point.X < 0 || origin.X + point.X > Size.Width - 1 || origin.Y + point.Y < 0 || origin.Y + point.Y > Size.Height - 1)
 					return;
 
-				if (line != point.Y)
+				if(line != point.Y)
 					sb.Append(ColorConsole.Escape.Location(origin.X + point.X, origin.Y + (line = point.Y)));
 
-				if (brick == null || brick == Brick.Empty)
+				if(brick == null)
 				{
-					if (fcolor != ConsoleColor.White || bcolor != ConsoleColor.Black)
+					if(fcolor != ConsoleColor.White || bcolor != ConsoleColor.Black)
 						sb.Append(ColorConsole.Escape.Color(fcolor = ConsoleColor.White, bcolor = ConsoleColor.Black));
 					sb.Append(' ');
 				}
 				else
 				{
-					if (fcolor != brick.ForeColor || bcolor != brick.BackColor)
+					if(fcolor != brick.ForeColor || bcolor != brick.BackColor)
 						sb.Append(ColorConsole.Escape.Color(fcolor = brick.ForeColor, bcolor = brick.BackColor));
 
 					sb.Append(brick.Char);

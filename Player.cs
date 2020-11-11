@@ -31,13 +31,13 @@ namespace Game
 
 		public override void Process(Command command)
 		{
-			if (command == Command.Escape)
+			if(command == Command.Escape)
 				Action = MenuAction.Quit;
-			else if (command == Command.Enter)
+			else if(command == Command.Enter)
 			{
 				// search for menu
 				var menu = menuWorld.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
-				switch (menu.Selected.Id)
+				switch(menu.Selected.Id)
 				{
 					case "new_game_1": Action = MenuAction.NewGame1; break;
 					case "new_game_2": Action = MenuAction.NewGame2; break;

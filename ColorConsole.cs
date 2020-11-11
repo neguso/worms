@@ -8,7 +8,7 @@ using System.Drawing;
 namespace Game
 {
 	/// <summary>
-	/// Fast console that supports colors
+	/// Fast text console that supports colors.
 	/// </summary>
 	public class ColorConsole
 	{
@@ -79,7 +79,7 @@ namespace Game
 		{
 			get
 			{
-				if (_charMap == null)
+				if(_charMap == null)
 				{
 					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"resources\map.txt"));
 					_charMap = new Dictionary<char, char>(map.Select(e => new KeyValuePair<char, char>(e[0], (char)byte.Parse(e.Substring(1), System.Globalization.NumberStyles.HexNumber))));
