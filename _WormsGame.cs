@@ -7,7 +7,65 @@ using System.Text;
 
 namespace Game
 {
-	public class WormsGame
+	public abstract class GenericGame
+	{
+		protected Keyboard keyboard;
+		protected Screen screen;
+		protected Frame frame;
+
+
+		protected GenericGame()
+		{
+			keyboard = new Keyboard();
+			screen = new Screen();
+			frame = new Frame(screen.Size);
+		}
+
+
+		public GenericWorld World { get; protected set; }
+
+
+		public void Run()
+		{
+			do
+			{
+				// get user input
+				keyboard.Clear();
+				keyboard.Read();
+
+				// process world
+				World.Tick(keyboard);
+
+				// render frame
+				frame.Clear();
+				World.Render(frame);
+
+				// draw frame on screen
+				screen.WaitRefresh();
+				screen.Draw(frame);
+			}
+			while(World.Status != null);
+		}
+	}
+
+
+	public class WormsGame : GenericGame
+	{
+		private WormsGame()
+		{
+			World = new WormsWorld(screen.Size);
+		}
+
+
+		public static void Launch()
+		{
+			new WormsGame().Run();
+		}
+	}
+
+
+
+	public class _WormsGame
 	{
 		protected Keyboard keyboard;
 		protected Screen screen;
@@ -18,7 +76,7 @@ namespace Game
 		protected WormsHost host;
 
 
-		private WormsGame()
+		private _WormsGame()
 		{
 			keyboard = new Keyboard();
 			screen = new Screen();
@@ -28,7 +86,7 @@ namespace Game
 
 		public static void Launch()
 		{
-			new WormsGame().Run();
+			new _WormsGame().Run();
 		}
 
 
@@ -50,7 +108,7 @@ namespace Game
 
 						if(gameWorld.Alive)
 						{
-							if(gameWorld.Completed)
+							//if(gameWorld.Completed)
 							{
 								// game finished
 								frame.Clear();
@@ -87,7 +145,7 @@ namespace Game
 
 		public void SetupMenu()
 		{
-			menuWorld = new GenericWorld();
+			//menuWorld = new GenericWorld();
 
 			host = new WormsHost(menuWorld)
 			{
@@ -141,7 +199,7 @@ namespace Game
 
 		public void SetupGame(int players)
 		{
-			gameWorld = new WormsWorld(screen.Size, players);
+			//gameWorld = new WormsWorld(screen.Size, players);
 		}
 
 		public void RunGame()
@@ -163,7 +221,7 @@ namespace Game
 				screen.WaitRefresh();
 				screen.Draw(frame);
 			}
-			while(gameWorld.Alive && !gameWorld.Completed);
+			while(gameWorld.Alive);// && !gameWorld.Completed);
 		}
 
 	}

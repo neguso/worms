@@ -226,7 +226,7 @@ namespace Game
 
 		protected override void UpdateCore()
 		{
-			Text(Point.Empty, "Level " + world.Level.Level);
+			Text(Point.Empty, "Level " + world.Level.Name);
 		}
 	}
 
