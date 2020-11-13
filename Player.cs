@@ -18,14 +18,14 @@ namespace Game
 
 	public class WormsHost : Player
 	{
-		private GenericWorld menuWorld;
+		private GenericWorld world;
 
 		public MenuAction Action = MenuAction.None;
 
 
 		public WormsHost(GenericWorld world)
 		{
-			menuWorld = world;
+			this.world = world;
 		}
 
 
@@ -36,7 +36,7 @@ namespace Game
 			else if(command == Command.Enter)
 			{
 				// search for menu
-				var menu = menuWorld.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
+				var menu = world.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
 				switch(menu.Selected.Id)
 				{
 					case "new_game_1": Action = MenuAction.NewGame1; break;
