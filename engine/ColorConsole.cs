@@ -13,7 +13,7 @@ namespace Game
 	public class ColorConsole
 	{
 
-		#region WinApi
+		#region Interop
 
 		private const int STD_OUTPUT_HANDLE = -11; //CONOUT$
 
@@ -41,6 +41,7 @@ namespace Game
 
 		private static uint _oldMode = 0;
 		private static Stream StandardOutput = null;
+
 
 		public static void Enable()
 		{
@@ -81,7 +82,7 @@ namespace Game
 			{
 				if(_charMap == null)
 				{
-					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"resources\map.txt"));
+					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"worms\resources\map.txt"));
 					_charMap = new Dictionary<char, char>(map.Select(e => new KeyValuePair<char, char>(e[0], (char)byte.Parse(e.Substring(1), System.Globalization.NumberStyles.HexNumber))));
 				}
 				return _charMap;

@@ -5,17 +5,27 @@ using System.Text;
 
 namespace Game
 {
+	/// <summary>
+	/// Represent the screen where frames are drawn.
+	/// </summary>
 	public class Screen
 	{
+		private DateTime lastRefresh = DateTime.MinValue;
+
+		public bool WaitForRefresh = true;
+
+
 		public Screen()
 		{
 			Console.CursorVisible = false;
 		}
 
 
-		public bool WaitForRefresh = true;
+		public Size Size
+		{
+			get { return ColorConsole.Size; }
+		}
 
-		private DateTime lastRefresh = DateTime.MinValue;
 
 		public void WaitRefresh(double duration = 16.66667) // 60Hz
 		{
@@ -26,29 +36,6 @@ namespace Game
 					System.Threading.Thread.Sleep((int)(duration - elapsed));
 				lastRefresh = DateTime.Now;
 			}
-		}
-
-		public Size Size
-		{
-			get { return ColorConsole.Size; }
-		}
-
-		public ConsoleColor ForegroundColor
-		{
-			get { return Console.ForegroundColor; }
-			set { Console.ForegroundColor = value; }
-		}
-
-		public ConsoleColor BackgroundColor
-		{
-			get { return Console.BackgroundColor; }
-			set { Console.BackgroundColor = value; }
-		}
-
-
-		public void Clear()
-		{
-			Console.Clear();
 		}
 
 		public void Draw(Frame frame, Point origin)

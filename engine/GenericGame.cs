@@ -1,8 +1,5 @@
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Game
@@ -22,10 +19,10 @@ namespace Game
 		}
 
 
-		public GenericWorld World { get; protected set; }
+		public GameWorld World { get; protected set; }
 
 
-		public void Run()
+		public virtual void Run()
 		{
 			do
 			{
@@ -45,22 +42,6 @@ namespace Game
 				screen.Draw(frame);
 			}
 			while(World.Active);
-		}
-	}
-
-
-
-	public class WormsGame : GenericGame
-	{
-		private WormsGame()
-		{
-			World = new WormsWorld(screen.Size);
-		}
-
-
-		public static void Launch()
-		{
-			new WormsGame().Run();
 		}
 	}
 }

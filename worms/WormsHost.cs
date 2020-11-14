@@ -1,29 +1,15 @@
-using System;
+﻿using System;
 
-namespace Game
+namespace Game.Worms
 {
-	public class Player
-	{
-		public int Index;
-		public string Name;
-		public ConsoleColor Color;
-		public int Lives;
-		public int Score;
-		public KeyboardKeyMap[] KeyMap;
-
-		public virtual void Process(Command command) { }
-	}
-
-
-
 	public class WormsHost : Player
 	{
-		private GenericWorld world;
+		protected GameWorld world;
 
-		public MenuAction Action = MenuAction.None;
+		public MenuAction Action { get; private set; } = MenuAction.None;
 
 
-		public WormsHost(GenericWorld world)
+		public WormsHost(GameWorld world)
 		{
 			this.world = world;
 		}
@@ -35,7 +21,7 @@ namespace Game
 				Action = MenuAction.Quit;
 			else if(command == Command.Enter)
 			{
-				// search for menu
+				// get menu
 				var menu = world.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
 				switch(menu.Selected.Id)
 				{

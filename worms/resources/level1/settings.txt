@@ -1,4 +1,4 @@
-food = 1
+food = 5
 
 player_1_start = 1, 20
 player_1_direction = Right

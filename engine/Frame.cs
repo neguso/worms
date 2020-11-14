@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Game
 {
@@ -156,6 +154,5 @@ namespace Game
 			for(int i = 0; i < chars.Length; i++)
 				SetBrick(new Point(location.X + i, location.Y), Brick.From(chars[i], foreground, backgound));
 		}
-
 	}
 }

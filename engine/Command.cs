@@ -3,16 +3,17 @@ using System;
 namespace Game
 {
 	/// <summary>
-	/// General commands used by games
+	/// General commands used by games.
 	/// </summary>
 	public class Command
 	{
+		public string Name { get; private set; }
+
+
 		private Command(string name)
 		{
-			this.Name = name;
+			Name = name;
 		}
-
-		public string Name;
 
 
 		// general commands
@@ -37,5 +38,8 @@ namespace Game
 
 		private static Command _fire = new Command("Fire");
 		public static Command Fire => _fire;
+
+		private static Command _jump = new Command("Jump");
+		public static Command Jump => _jump;
 	}
 }

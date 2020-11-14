@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Game
+using Game;
+using Game.Worms;
+
+namespace MyGame
 {
 	internal class Program
 	{

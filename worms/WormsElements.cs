@@ -5,214 +5,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace Game
+namespace Game.Worms
 {
-	public class Sprite : Frame
-	{
-		public Point Location;
-		public int ZIndex;
-		public bool Visible;
-		public bool Enabled;
-
-
-		public Sprite(Point location, Size size) : base(size)
-		{
-			Location = location;
-			Visible = true;
-			Enabled = true;
-		}
-
-
-		public void Draw(Frame frame)
-		{
-			if(Enabled && Visible)
-				frame.Load(this, Location);
-		}
-
-		public virtual List<Point> GetBody()
-		{
-			var list = new List<Point>(buffer.GetLength(0) * buffer.GetLength(1));
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-					list.Add(new Point(Location.X + x, Location.Y + y));
-			return list;
-		}
-
-		public virtual List<Point> Collisions(Element element)
-		{
-			return element.GetBody().Intersect(GetBody(), PointEqualityComparer.EqualityComparer).ToList();
-		}
-
-
-
-		private sealed class PointEqualityComparer : IEqualityComparer<Point>
-		{
-			public bool Equals(Point a, Point b)
-			{
-				if(ReferenceEquals(a, b)) return true;
-				if(ReferenceEquals(a, null)) return false;
-				if(ReferenceEquals(b, null)) return false;
-				if(a.GetType() != b.GetType()) return false;
-				return a.X == b.X && a.Y == b.Y;
-			}
-
-			public int GetHashCode([DisallowNull] Point obj)
-			{
-				return obj.X + obj.Y * 100000;
-			}
-
-			private static readonly PointEqualityComparer eqc = new PointEqualityComparer();
-			public static PointEqualityComparer EqualityComparer => eqc;
-		}
-	}
-
-
-
-	public class Element : Sprite
-	{
-		protected Queue<Command> Commands { get; private set; }
-		protected DateTime LastUpdated = DateTime.MinValue;
-
-		// players commanding this element
-		public List<Player> Players { get; private set; }
-		public int UpdateInterval = 100;
-
-
-		public Element(Point location, Size size) : base(location, size)
-		{
-			Commands = new Queue<Command>();
-			Players = new List<Player>();
-		}
-
-
-		public bool UpdatePending
-		{
-			get { return (DateTime.Now - LastUpdated).TotalMilliseconds > UpdateInterval; }
-		}
-
-		public virtual void Process(Command command)
-		{
-			if(Enabled)
-				Commands.Enqueue(command);
-		}
-
-		public virtual void Update()
-		{
-			if(UpdatePending)
-			{
-				if(Enabled)
-					UpdateCore();
-				LastUpdated = DateTime.Now;
-			}
-		}
-
-		protected virtual void UpdateCore() { }
-	}
-
-
-
-	public class Slideshow
-	{
-		public List<Brick[,]> Slides { get; private set; }
-		public int Active;
-
-
-		public Slideshow()
-		{
-			Slides = new List<Brick[,]>();
-			Active = -1;
-		}
-
-
-		// draw active slide into frame
-		public void Draw(Frame frame, Point location)
-		{
-			if(Slides.Count > 0)
-				frame.Load(Slides[Active], location);
-		}
-
-		// advance to next slide
-		public void Next()
-		{
-			if(Slides.Count > 0)
-			{
-				Active++;
-				if(Active >= Slides.Count)
-					Active = 0;
-			}
-		}
-	}
-
-
-
-	public abstract class AnimatedElement : Element
-	{
-		//Slideshow
-
-		public AnimatedElement(Point location, Size size) : base(location, size)
-		{
-
-		}
-	}
-
-
-	public class StaticText : Element
-	{
-		public StaticText(string label, Point location, int width = 50) : base(location, new Size(width, 1))
-		{
-			Label = label;
-			Foreground = ConsoleColor.White;
-			Background = ConsoleColor.Black;
-		}
-
-
-		public string Label { get; set; }
-
-		public ConsoleColor Foreground { get; set; }
-
-		public ConsoleColor Background { get; set; }
-
-		protected override void UpdateCore()
-		{
-			Text(Point.Empty, Label, Foreground, Background);
-		}
-	}
-
-
-	public class ScrollingText : Element
-	{
-		protected Queue<char> queue;
-
-
-		public ScrollingText(string label, Point location, int width) : base(location, new Size(width, 1))
-		{
-			Label = label;
-			Step = 1;
-			UpdateInterval = 0;
-
-			queue = new Queue<char>(label.ToCharArray());
-			while(queue.Count < Size.Width)
-				queue.Enqueue(' ');
-		}
-
-
-		public string Label { get; set; }
-		public int Step { get; set; }
-
-
-		protected override void UpdateCore()
-		{
-			var text = new String(queue.ToArray());
-			Text(Point.Empty, text.Substring(0, Math.Min(text.Length, Size.Width)));
-
-			// shift text
-			for(int i = 0; i < Step; i++)
-				queue.Enqueue(queue.Dequeue());
-		}
-	}
-
-
-
 	public class ScoreBox : Element
 	{
 		protected Player player;
@@ -236,6 +30,7 @@ namespace Game
 			Text(new Point(player.Name.Length + 7, 0), ColorConsole.CharMap['►'] + " " + player.Score.ToString().PadLeft(4, '0'), player.Color);
 		}
 	}
+
 
 
 	public class LevelBox : Element
@@ -366,11 +161,34 @@ namespace Game
 	}
 
 
+
 	public enum MovingDirection
 	{
 		Left,
 		Right,
 		Up,
 		Down
+	}
+
+
+
+	public class Food : Element
+	{
+		public int Length { get; set; }
+		public int Speed { get; set; }
+		public bool Eated { get; set; }
+
+
+		public Food(Point location, int weight = 3, int speed = 10) : base(location, new Size(1, 1))
+		{
+			Length = weight;
+			Speed = speed;
+		}
+
+
+		protected override void UpdateCore()
+		{
+			SetBrick(Point.Empty, Brick.From(ColorConsole.CharMap['♣'], ConsoleColor.Green));
+		}
 	}
 }

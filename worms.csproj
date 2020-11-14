@@ -6,42 +6,46 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="resources\banner.txt">
+    <None Update="worms\resources\banner.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level1\arena.txt">
+    <None Update="worms\resources\level1\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level1\settings.txt">
+    <None Update="worms\resources\level1\settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level2\arena.txt">
+    <None Update="worms\resources\level2\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level2\settings.txt">
+    <None Update="worms\resources\level2\settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level3\arena.txt">
+    <None Update="worms\resources\level3\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level3\settings.txt">
+    <None Update="worms\resources\level3\settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level4\arena.txt">
+    <None Update="worms\resources\level4\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\level4\settings.txt">
+    <None Update="worms\resources\level4\settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\win.txt">
+    <None Update="worms\resources\win.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\map.txt">
+    <None Update="worms\resources\map.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="resources\lose.txt">
+    <None Update="worms\resources\lose.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="invaders\" />
   </ItemGroup>
 
 </Project>

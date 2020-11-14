@@ -3,7 +3,7 @@ using System;
 namespace Game
 {
 	/// <summary>
-	/// Represent a character with foreground and background color.
+	/// Represent a character on display with foreground and background color.
 	/// </summary>
 	public class Brick
 	{
