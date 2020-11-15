@@ -114,7 +114,6 @@ namespace Game.Worms
 	}
 
 
-
 	public class MenuLevel : GameLevel
 	{
 		public MenuLevel(GameWorld world) : base(world)
@@ -446,6 +445,5 @@ namespace Game.Worms
 	public class WorldConfig
 	{
 		public int Players;
-		public int[] Scores;//TODO
 	}
 }

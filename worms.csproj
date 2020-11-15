@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="invaders\resources\banner.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="worms\resources\banner.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -45,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="invaders\" />
+    <Folder Include="invaders\resources\level1\" />
   </ItemGroup>
 
 </Project>
