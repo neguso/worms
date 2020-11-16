@@ -35,21 +35,40 @@ namespace Game
 			messages.Enqueue(message);
 		}
 
-		public virtual void Tick(Keyboard keyboard)
+		public IEnumerable<Command> Decode(IEnumerable<ConsoleKey> keys, Player player)
 		{
+			return keys.Join(player.KeyMap, k => k, m => m.Key, (k, m) => m.Command);
+
+			//return keys.Select(key =>
+			//{
+			//  var map = player.KeyMap.FirstOrDefault(map => map.Key == key);
+			//  if(map == null) return null;
+			//  return map.Command;
+			//}).Where(c => c != null);
+		}
+
+		public virtual void Tick(IEnumerable<ConsoleKey> keys)
+		{
+			// process world messages
 			if(messages.Count > 0)
 				ProcessMessage(messages.Dequeue());
 
 			Players.ForEach(player =>
 			{
-				var command = keyboard.DequeueCommand(player);
-				if(command != null)
+				// get player commands
+				var commands = Decode(keys, player);
+				foreach(var command in commands)
 				{
+					// send commands to player
 					player.Process(command);
-					var list = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
-					list.ForEach(element => element.Process(command));
-				}
+
+					// send commands to player elements
+					var elements = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
+					elements.ForEach(element => element.Process(command));
+				}				
 			});
+
+			// update world elements
 			Elements.ForEach(element => element.Update());
 		}
 

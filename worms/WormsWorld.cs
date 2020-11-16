@@ -22,10 +22,10 @@ namespace Game.Worms
 		public GameLevel Level { get; protected set; }
 
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			base.Tick(keyboard);
-			if(Level != null) Level.Tick(keyboard);
+			base.Tick(keys);
+			if(Level != null) Level.Tick(keys);
 		}
 
 		public override void ProcessMessage(WorldMessage message)
@@ -106,9 +106,9 @@ namespace Game.Worms
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
+			if(keys.Count() > 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
@@ -125,10 +125,10 @@ namespace Game.Worms
 			{
 				KeyMap = new KeyboardKeyMap[]
 				{
-						new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false), Command.Escape),
-						new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false), Command.Enter),
-						new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-						new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
+						new KeyboardKeyMap(ConsoleKey.Escape, Command.Escape),
+						new KeyboardKeyMap(ConsoleKey.Enter, Command.Enter),
+						new KeyboardKeyMap(ConsoleKey.UpArrow, Command.Up),
+						new KeyboardKeyMap(ConsoleKey.DownArrow, Command.Down)
 				}
 			};
 			//
@@ -205,10 +205,10 @@ namespace Game.Worms
 				Score = 0,
 				KeyMap = new KeyboardKeyMap[]
 			{
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false), Command.Left),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false), Command.Right),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), Command.Up),
-					new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), Command.Down)
+					new KeyboardKeyMap(ConsoleKey.LeftArrow, Command.Left),
+					new KeyboardKeyMap(ConsoleKey.RightArrow, Command.Right),
+					new KeyboardKeyMap(ConsoleKey.UpArrow, Command.Up),
+					new KeyboardKeyMap(ConsoleKey.DownArrow, Command.Down)
 			}
 			};
 			World.Players.Add(player1);
@@ -227,10 +227,10 @@ namespace Game.Worms
 					Score = 0,
 					KeyMap = new KeyboardKeyMap[]
 					{
-							new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.A, false, false, false), Command.Left),
-							new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.D, false, false, false), Command.Right),
-							new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.W, false, false, false), Command.Up),
-							new KeyboardKeyMap(new ConsoleKeyInfo('\0', ConsoleKey.S, false, false, false), Command.Down)
+							new KeyboardKeyMap(ConsoleKey.A, Command.Left),
+							new KeyboardKeyMap(ConsoleKey.D, Command.Right),
+							new KeyboardKeyMap(ConsoleKey.W, Command.Up),
+							new KeyboardKeyMap(ConsoleKey.S, Command.Down)
 					}
 				};
 				World.Players.Add(player2);
@@ -406,9 +406,9 @@ namespace Game.Worms
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
+			if(keys.Count() > 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
@@ -434,9 +434,9 @@ namespace Game.Worms
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
+			if(keys.Count() > 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}

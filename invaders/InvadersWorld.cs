@@ -17,10 +17,10 @@ namespace Game.Invaders
 		public GameLevel Level { get; protected set; }
 
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			base.Tick(keyboard);
-			if(Level != null) Level.Tick(keyboard);
+			base.Tick(keys);
+			if(Level != null) Level.Tick(keys);
 		}
 
 		public override void ProcessMessage(WorldMessage message)
@@ -88,29 +88,73 @@ namespace Game.Invaders
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
-				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
+			if(keys.Count() > 0)
+				World.PostMessage(new WorldMessage { Name = MessageName.StartGame });
 		}
 	}
 
 
 	public class InvadersGameLevel : GameLevel
 	{
+		protected LevelConfig Config;
+
+		protected Arena Arena;
+		protected DefenderShip defender;
+
+
 		public InvadersGameLevel(GameWorld world, int level, LevelConfig config) : base(world)
 		{
+			Index = level;
+			Name = level.ToString();
+			Config = config;
+		}
 
+
+		public override void Install()
+		{
+			var player = new Player()
+			{
+				Index = 1,
+				Name = "Player",
+				Color = ConsoleColor.White,
+				Lives = 3,
+				Score = 0,
+				KeyMap = new KeyboardKeyMap[]
+				{
+					new KeyboardKeyMap(ConsoleKey.LeftArrow, Command.Left),
+					new KeyboardKeyMap(ConsoleKey.RightArrow, Command.Right),
+					new KeyboardKeyMap(ConsoleKey.Spacebar, Command.Fire)
+				}
+			};
+			World.Players.Add(player);
+
+			Arena = new Arena(Config.DataFolder, new Point(0, 0), new Size(World.Size.Width, World.Size.Height));
+			World.Elements.Add(Arena);
+
+			defender = new DefenderShip(player, new Point(10, 35), World.Size);
+			World.Elements.Add(defender);
+		}
+
+		public override void Uninstall()
+		{
+			World.Players.Clear();
+			World.Elements.Clear();
 		}
 
 
 
 		public class LevelConfig
 		{
+			public string DataFolder;
+
 			public LevelConfig() { }
 
 			public LevelConfig(string path)
-			{ }
+			{
+				DataFolder = path;
+			}
 		}
 	}
 
@@ -135,9 +179,9 @@ namespace Game.Invaders
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
+			if(keys.Count() > 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
@@ -163,9 +207,9 @@ namespace Game.Invaders
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keyboard.Buffer.Count > 0)
+			if(keys.Count() > 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}

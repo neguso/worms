@@ -27,11 +27,10 @@ namespace Game
 			do
 			{
 				// get user input
-				keyboard.Clear();
-				keyboard.Read();
+				var keys = keyboard.ReadKeyPress();
 
 				// process world
-				World.Tick(keyboard);
+				World.Tick(keys);
 
 				// render frame
 				frame.Clear();

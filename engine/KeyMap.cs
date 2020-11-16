@@ -19,9 +19,9 @@ namespace Game
 
 
 
-	public class KeyboardKeyMap : KeyMap<ConsoleKeyInfo>
+	public class KeyboardKeyMap : KeyMap<ConsoleKey>
 	{
-		public KeyboardKeyMap(ConsoleKeyInfo key, Command command) : base(key, command)
+		public KeyboardKeyMap(ConsoleKey key, Command command) : base(key, command)
 		{ }
 	}
 }

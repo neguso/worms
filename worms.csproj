@@ -6,7 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="invaders\resources\alien1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="invaders\resources\alien2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="invaders\resources\banner.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="invaders\resources\defender1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="invaders\resources\level1\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="worms\resources\banner.txt">
@@ -48,7 +60,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="invaders\resources\level1\" />
+    <Resource Include="invaders\resources\alien1.txt" />
+    <Resource Include="invaders\resources\alien2.txt" />
   </ItemGroup>
 
 </Project>
