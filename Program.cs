@@ -9,7 +9,7 @@ namespace MyGame
 {
 	internal class Program
 	{
-		public static void Main1(string[] args)
+		public static void Main(string[] args)
 		{
 			Console.Clear();
 			Console.Title = "Space Invaders";
@@ -23,7 +23,7 @@ namespace MyGame
 			//restore title
 		}
 
-		public static void Main(string[] args)
+		public static void Main1(string[] args)
 		{
 			Console.Clear();
 			Console.Title = "The Worms Game";

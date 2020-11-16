@@ -12,21 +12,16 @@ namespace Game.Invaders
 		}
 
 
+		// overriden to get keys currently down
 		public override void Run()
 		{
 			do
 			{
-				// get users input
-				//keyboard.Clear();
-				//keyboard.Read();
-				var a = keyboard.GetStatus();
-				if(a.Length > 0)
-				{
-					Console.Write(a.Length);
-				}
+				// get user input
+				var keys = keyboard.ReadKeyDown();
 
 				// process world
-				World.Tick(keyboard);
+				World.Tick(keys);
 
 				// render frame
 				frame.Clear();
@@ -38,7 +33,6 @@ namespace Game.Invaders
 			}
 			while(World.Active);
 		}
-
 
 
 		public static void Launch()

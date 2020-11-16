@@ -155,7 +155,7 @@ namespace Game.Worms
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
 			var host = World.Players[0] as WormsHost;
 
@@ -267,7 +267,7 @@ namespace Game.Worms
 			World.Elements.Clear();
 		}
 
-		public override void Tick(Keyboard keyboard)
+		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
 			// check worms collisions
 			foreach(var worm in Worms.Where(w => w.Enabled))
@@ -304,7 +304,7 @@ namespace Game.Worms
 			if(Worms.Count(w => w.Enabled) == 0)
 				World.PostMessage(new WorldMessage { Name = MessageName.GameOver });
 
-			if(keyboard.Buffer.ToList().Any(k => k.Key == ConsoleKey.Escape))
+			if(keys.Any(k => k == ConsoleKey.Escape))
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 

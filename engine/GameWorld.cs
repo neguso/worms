@@ -35,16 +35,12 @@ namespace Game
 			messages.Enqueue(message);
 		}
 
+		/// <summary>
+		/// Decode keys in player commands.
+		/// </summary>
 		public IEnumerable<Command> Decode(IEnumerable<ConsoleKey> keys, Player player)
 		{
 			return keys.Join(player.KeyMap, k => k, m => m.Key, (k, m) => m.Command);
-
-			//return keys.Select(key =>
-			//{
-			//  var map = player.KeyMap.FirstOrDefault(map => map.Key == key);
-			//  if(map == null) return null;
-			//  return map.Command;
-			//}).Where(c => c != null);
 		}
 
 		public virtual void Tick(IEnumerable<ConsoleKey> keys)
@@ -52,7 +48,9 @@ namespace Game
 			// process world messages
 			if(messages.Count > 0)
 				ProcessMessage(messages.Dequeue());
-
+			if(keys.Count() > 0)
+			{ 
+			}
 			Players.ForEach(player =>
 			{
 				// get player commands
@@ -115,6 +113,6 @@ namespace Game
 
 		public virtual void Uninstall() { }
 
-		public virtual void Tick(Keyboard keyboard) { }
+		public virtual void Tick(IEnumerable<ConsoleKey> keys) { }
 	}
 }

@@ -133,14 +133,45 @@ namespace Game.Invaders
 			Arena = new Arena(Config.DataFolder, new Point(0, 0), new Size(World.Size.Width, World.Size.Height));
 			World.Elements.Add(Arena);
 
-			defender = new DefenderShip(player, new Point(10, 35), World.Size);
+			defender = new DefenderShip(player, new Point(10, 35), new Size(World.Size.Width, World.Size.Height - 4));
 			World.Elements.Add(defender);
+
+
+			var b = new Barrier(new Point(10, 10));
+			World.Elements.Add(b);
 		}
 
 		public override void Uninstall()
 		{
 			World.Players.Clear();
 			World.Elements.Clear();
+		}
+
+		public override void Tick(IEnumerable<ConsoleKey> keys)
+		{
+			// check missiles collisions
+			foreach(var missile in World.Elements.OfType<Missile>().Where(m => m.State == Missile.MissileState.Lauched))
+			{
+				// with barriers
+				foreach(var barrier in World.Elements.OfType<Barrier>())
+				{
+					var collisions = missile.Collisions(barrier);
+					if(collisions.Count > 0)
+					{
+						barrier.Hit(new Point(collisions[0].X - barrier.Location.X, collisions[0].Y - barrier.Location.Y));
+						missile.Explode();
+					}
+				}
+
+			}
+
+			// check defender collisons
+
+			// remove out of range missiles
+			World.Elements.RemoveAll(e => e is Missile m && m.State == Missile.MissileState.OutOfRange);
+
+			// launch missiles
+			World.Elements.AddRange(defender.GetMissiles());
 		}
 
 
