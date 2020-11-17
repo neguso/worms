@@ -102,6 +102,8 @@ namespace Game.Invaders
 
 		protected Arena Arena;
 		protected DefenderShip defender;
+		protected List<InvaderShip> invaders;
+		protected InvaderFleet fleet;
 
 
 		public InvadersGameLevel(GameWorld world, int level, LevelConfig config) : base(world)
@@ -130,15 +132,22 @@ namespace Game.Invaders
 			};
 			World.Players.Add(player);
 
-			Arena = new Arena(Config.DataFolder, new Point(0, 0), new Size(World.Size.Width, World.Size.Height));
+			Arena = new Arena(Config.DataFolder, new Point(0, 0), new Size(World.Size.Width, World.Size.Height - 2));
 			World.Elements.Add(Arena);
-
-			defender = new DefenderShip(player, new Point(10, 35), new Size(World.Size.Width, World.Size.Height - 4));
+			
+			defender = new DefenderShip(player, new Point(10, 35), Arena.Size);
 			World.Elements.Add(defender);
 
+			for(int b = 0; b < 4; b++)
+				World.Elements.Add(new Barrier(new Point(9 + b * 23, 32)));
 
-			var b = new Barrier(new Point(10, 10));
-			World.Elements.Add(b);
+			invaders = new List<InvaderShip>();
+			for(int row = 0; row < 4; row++)
+				for(int col = 0; col < 5; col++)
+					invaders.Add(new InvaderShipOne(new Point(col * 13, 2 + row * 5), Arena.Size));
+			World.Elements.AddRange(invaders);
+
+			fleet = new InvaderFleet(invaders, Arena.Size);
 		}
 
 		public override void Uninstall()
@@ -150,7 +159,7 @@ namespace Game.Invaders
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
 			// check missiles collisions
-			foreach(var missile in World.Elements.OfType<Missile>().Where(m => m.State == Missile.MissileState.Lauched))
+			foreach(var missile in World.Elements.OfType<Projectile>().Where(m => m.State == Projectile.MissileState.Lauched))
 			{
 				// with barriers
 				foreach(var barrier in World.Elements.OfType<Barrier>())
@@ -168,12 +177,88 @@ namespace Game.Invaders
 			// check defender collisons
 
 			// remove out of range missiles
-			World.Elements.RemoveAll(e => e is Missile m && m.State == Missile.MissileState.OutOfRange);
+			World.Elements.RemoveAll(e => e is Projectile m && m.State == Projectile.MissileState.OutOfRange);
 
-			// launch missiles
+			// coordinate invaders fleet
+			fleet.Move();
+
+			// launch missiles, bombs
 			World.Elements.AddRange(defender.GetMissiles());
+			invaders.ForEach(i => World.Elements.AddRange(i.GetMissiles()));
 		}
 
+
+
+
+		public class InvaderFleet
+		{
+			private DateTime lastUpdate;
+
+			public List<InvaderShip> Invaders { get; private set; }
+			public MovingDirection Direction;
+			public int UpdateInterval;
+			public Size Range;
+
+
+			public InvaderFleet(List<InvaderShip> invaders, Size range)
+			{
+				Invaders = invaders;
+				Range = range;
+				//UpdateInterval = 750;
+				lastUpdate = DateTime.MinValue;
+			}
+
+			public void Move()
+			{
+				var elapsed = (DateTime.Now - lastUpdate).TotalMilliseconds;
+				if(elapsed > UpdateInterval)
+				{
+					var distance = new Size(0, 0);
+					var lowest = Invaders.Max(i => i.Location.Y + i.Size.Height);
+					switch(Direction)
+					{
+						case MovingDirection.Left:
+							var leftmost = Invaders.Min(i => i.Location.X);
+							if(leftmost == 0)
+							{
+								Direction = MovingDirection.Right;
+								distance.Width = +1;
+								distance.Height = lowest < 38 ? 1 : 0;
+							}
+							else
+							{
+								distance.Width = -1;
+							}
+							break;
+
+						case MovingDirection.Right:
+							var righttmost = Invaders.Max(i => i.Location.X + i.Size.Width);
+							if(righttmost == Range.Width - 1)
+							{
+								Direction = MovingDirection.Left;
+								distance.Width = -1;
+								distance.Height = lowest < 38 ? 1 : 0;
+							}
+							else
+							{
+								distance.Width = +1;
+							}
+							break;
+					}
+					foreach(var invader in Invaders)
+						invader.Move(distance);
+
+					lastUpdate = DateTime.Now;
+				}
+			}
+
+
+			public enum MovingDirection
+			{
+				Left,
+				Right
+			}
+		}
 
 
 		public class LevelConfig

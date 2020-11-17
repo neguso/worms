@@ -59,7 +59,7 @@ namespace Game.Invaders
 			var duration = (now - lastFired).TotalMilliseconds;
 			if(duration < fireInterval) return;
 
-			missiles.Add(new Missile(new Point(Location.X + 3, Location.Y - 1), -1, Range.Height));
+			missiles.Add(new Missile(new Point(Location.X + 3, Location.Y - 1), Range.Height - 3));
 			lastFired = now;
 		}
 
@@ -88,29 +88,47 @@ namespace Game.Invaders
 
 	public abstract class InvaderShip : Element
 	{
-		protected List<Missile> bombs;
+		protected List<Bomb> bombs;
 
 		public ShipStatus Status { get; protected set; }
+		public Size Range { get; private set; }
 
 
-		public InvaderShip(Point location, Size size) : base(location, size)
+		public InvaderShip(Point location, Size size, Size range) : base(location, size)
 		{
-			bombs = new List<Missile>();
+			bombs = new List<Bomb>();
+			Range = range;
 
 			Status = ShipStatus.Normal;
 			UpdateInterval = 50;
 		}
 
 
-		public void Move(Size delta)
+		public void Move(Size distance)
 		{
-			Location.X += delta.Width;
-			Location.Y += delta.Height;
+			Location.X += distance.Width;
+			Location.Y += distance.Height;
 		}
 
 		public void Fire()
 		{
-			//bombs.Add(new Bomb(new Point(Location.X + 3, Location.Y - 1), -1, Range.Height));
+			var range = Range.Height - Location.Y - Size.Height;
+			if(range > 0)
+				bombs.Add(new Bomb(new Point(Location.X + 4, Location.Y + 5), Range.Height - Location.Y - Size.Height));
+		}
+
+		public List<Bomb> GetMissiles()
+		{
+			var list = bombs.ToList();
+			bombs.Clear();
+			return list;
+		}
+
+		protected override void UpdateCore()
+		{
+			Random rnd = new Random();
+			if(rnd.Next(100) > 90)
+				Fire();
 		}
 
 
@@ -126,7 +144,7 @@ namespace Game.Invaders
 
 	public class InvaderShipOne : InvaderShip
 	{
-		public InvaderShipOne(Point location) : base(location, new Size(10, 5))
+		public InvaderShipOne(Point location, Size range) : base(location, new Size(10, 5), range)
 		{
 			Load(@"invaders\resources\alien1.txt", Point.Empty);
 		}
@@ -135,7 +153,7 @@ namespace Game.Invaders
 
 	public class InvaderShipTwo : InvaderShip
 	{
-		public InvaderShipTwo(Point location) : base(location, new Size(8, 4))
+		public InvaderShipTwo(Point location, Size range) : base(location, new Size(8, 4), range)
 		{
 			Load(@"invaders\resources\alien2.txt", Point.Empty);
 		}
@@ -143,17 +161,16 @@ namespace Game.Invaders
 
 
 
-	public class Missile : Element
+	public class Projectile : Element
 	{
 		protected char[] explosion = new char[] { '∙', '☼' };
-
 
 		public int Direction { get; private set; }
 		public int Range { get; private set; }
 		public MissileState State { get; protected set; }
 
 
-		public Missile(Point location, int direction, int range) : base(location, new Size(1, 1))
+		public Projectile(Point location, int direction, int range) : base(location, new Size(1, 1))
 		{
 			State = MissileState.Lauched;
 			Direction = direction;
@@ -206,7 +223,17 @@ namespace Game.Invaders
 
 
 
-	public class Bomb : Missile
+	public class Missile : Projectile
+	{
+		public Missile(Point location, int range) : base(location, -1, range)
+		{
+			SetBrick(Point.Empty, Brick.From('!', ConsoleColor.Red));
+		}
+	}
+
+
+
+	public class Bomb : Projectile
 	{
 		public Bomb(Point location, int range) : base(location, +1, range)
 		{
@@ -220,7 +247,7 @@ namespace Game.Invaders
 	{
 		private readonly char[] stages = new char[] {'\xb0', '\xb1', '\xb2', '\xdb', };
 
-		public Barrier(Point location) : base(location, new Size(16, 2))
+		public Barrier(Point location) : base(location, new Size(15, 2))
 		{
 			Load(@"invaders\resources\barrier.txt", Point.Empty);
 		}
