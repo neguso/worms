@@ -6,10 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="invaders\resources\alien1.txt">
+    <None Update="invaders\resources\alien_crab.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="invaders\resources\alien2.txt">
+    <None Update="invaders\resources\alien_ufo.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="invaders\resources\alien_octopus.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="invaders\resources\banner.txt">
@@ -63,8 +66,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="invaders\resources\alien1.txt" />
-    <Resource Include="invaders\resources\alien2.txt" />
+    <Resource Include="invaders\resources\alien_crab.txt" />
+    <Resource Include="invaders\resources\alien_octopus.txt" />
   </ItemGroup>
 
 </Project>

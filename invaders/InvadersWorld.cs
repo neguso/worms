@@ -142,9 +142,13 @@ namespace Game.Invaders
 				World.Elements.Add(new Barrier(new Point(9 + b * 23, 32)));
 
 			invaders = new List<InvaderShip>();
-			for(int row = 0; row < 4; row++)
+			for(int row = 0; row < 2; row++)
 				for(int col = 0; col < 5; col++)
-					invaders.Add(new InvaderShipOne(new Point(col * 13, 2 + row * 5), Arena.Size));
+					invaders.Add(new InvaderShipCrab(new Point(col * 13, 3 + row * 5), Arena.Size));
+			for(int row = 2; row < 4; row++)
+				for(int col = 0; col < 5; col++)
+					invaders.Add(new InvaderShipOctopus(new Point(col * 13 + 1, 3 + row * 5 + 1), Arena.Size));
+			invaders.Add(new InvaderShipUFO(new Point(0, 0), Arena.Size));
 			World.Elements.AddRange(invaders);
 
 			fleet = new InvaderFleet(invaders, Arena.Size);
@@ -172,12 +176,33 @@ namespace Game.Invaders
 					}
 				}
 
+				// with defender
+				//...
+
+				// with invaders
+				if(missile.GetType() == typeof(Missile))
+				{
+					foreach(var invader in invaders)
+					{
+						var collisions = missile.Collisions(invader);
+						if(collisions.Count > 0)
+						{
+							missile.Explode();
+							invader.Hit(new Point(collisions[0].X - invader.Location.X, collisions[0].Y - invader.Location.Y));
+						}
+					}
+				}
 			}
 
 			// check defender collisons
+			//..
 
 			// remove out of range missiles
 			World.Elements.RemoveAll(e => e is Projectile m && m.State == Projectile.MissileState.OutOfRange);
+
+			// remove dead invaders
+			World.Elements.RemoveAll(e => e is InvaderShip i && i.Status == InvaderShip.ShipStatus.Dead);
+			fleet.Invaders.RemoveAll(i => i.Status == InvaderShip.ShipStatus.Dead);
 
 			// coordinate invaders fleet
 			fleet.Move();
@@ -204,7 +229,7 @@ namespace Game.Invaders
 			{
 				Invaders = invaders;
 				Range = range;
-				//UpdateInterval = 750;
+				UpdateInterval = 750;
 				lastUpdate = DateTime.MinValue;
 			}
 
@@ -213,6 +238,7 @@ namespace Game.Invaders
 				var elapsed = (DateTime.Now - lastUpdate).TotalMilliseconds;
 				if(elapsed > UpdateInterval)
 				{
+					// calculate moving distance and direction
 					var distance = new Size(0, 0);
 					var lowest = Invaders.Max(i => i.Location.Y + i.Size.Height);
 					switch(Direction)
@@ -223,26 +249,22 @@ namespace Game.Invaders
 							{
 								Direction = MovingDirection.Right;
 								distance.Width = +1;
-								distance.Height = lowest < 38 ? 1 : 0;
+								distance.Height = lowest < Range.Height ? 1 : 0;
 							}
 							else
-							{
 								distance.Width = -1;
-							}
 							break;
 
 						case MovingDirection.Right:
 							var righttmost = Invaders.Max(i => i.Location.X + i.Size.Width);
-							if(righttmost == Range.Width - 1)
+							if(righttmost == Range.Width)
 							{
 								Direction = MovingDirection.Left;
 								distance.Width = -1;
-								distance.Height = lowest < 38 ? 1 : 0;
+								distance.Height = lowest < Range.Height ? 1 : 0;
 							}
 							else
-							{
 								distance.Width = +1;
-							}
 							break;
 					}
 					foreach(var invader in Invaders)

@@ -86,9 +86,10 @@ namespace Game.Invaders
 
 
 
-	public abstract class InvaderShip : Element
+	public abstract class InvaderShip : AnimatedElement
 	{
 		protected List<Bomb> bombs;
+		protected ConsoleColor[] exploding = new ConsoleColor[] { ConsoleColor.DarkRed, ConsoleColor.DarkGray, ConsoleColor.Gray };
 
 		public ShipStatus Status { get; protected set; }
 		public Size Range { get; private set; }
@@ -100,7 +101,7 @@ namespace Game.Invaders
 			Range = range;
 
 			Status = ShipStatus.Normal;
-			UpdateInterval = 50;
+			UpdateInterval = 100;
 		}
 
 
@@ -114,7 +115,10 @@ namespace Game.Invaders
 		{
 			var range = Range.Height - Location.Y - Size.Height;
 			if(range > 0)
-				bombs.Add(new Bomb(new Point(Location.X + 4, Location.Y + 5), Range.Height - Location.Y - Size.Height));
+			{
+				Random rnd = new Random();
+				bombs.Add(new Bomb(new Point(Location.X + rnd.Next(Size.Width + 1), Location.Y + 5), Range.Height - Location.Y - Size.Height));
+			}
 		}
 
 		public List<Bomb> GetMissiles()
@@ -124,11 +128,49 @@ namespace Game.Invaders
 			return list;
 		}
 
+		public void Hit(Point location)
+		{
+			Status = ShipStatus.Exploding;
+		}
+
+		public override List<Point> GetBody()
+		{
+			var list = new List<Point>();
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
+				{
+					var brick = buffer[x, y];
+					if(brick != null)
+						list.Add(new Point(Location.X + x, Location.Y + y));
+				}
+			return list;
+		}
+
 		protected override void UpdateCore()
 		{
+			base.UpdateCore();
+
 			Random rnd = new Random();
-			if(rnd.Next(100) > 90)
-				Fire();
+			switch(Status)
+			{
+				case ShipStatus.Normal:
+					if(rnd.Next(100) > 98) Fire();
+					break;
+				case ShipStatus.Alerted:
+					if(rnd.Next(100) > 95) Fire();
+					break;
+				case ShipStatus.Exploding:
+					if(exploding.Length > 0)
+					{
+						for(int x = 0; x < buffer.GetLength(0); x++)
+							for(int y = 0; y < buffer.GetLength(1); y++)
+								if(buffer[x, y] != null) buffer[x, y].ForeColor = exploding[exploding.Length - 1];
+						Array.Resize(ref exploding, exploding.Length - 1);
+					}
+					else
+						Status = ShipStatus.Dead;
+					break;
+			}
 		}
 
 
@@ -136,26 +178,41 @@ namespace Game.Invaders
 		{
 			Normal,
 			Alerted,
-			Exploding
+			Exploding,
+			Dead
 		}
 	}
 
 
 
-	public class InvaderShipOne : InvaderShip
+	public class InvaderShipCrab : InvaderShip
 	{
-		public InvaderShipOne(Point location, Size range) : base(location, new Size(10, 5), range)
+		public InvaderShipCrab(Point location, Size range) : base(location, new Size(10, 5), range)
 		{
-			Load(@"invaders\resources\alien1.txt", Point.Empty);
+			timer.Interval = 750;
+			Show.Load(@"invaders\resources\alien_crab.txt", Size);
 		}
 	}
 
 
-	public class InvaderShipTwo : InvaderShip
+
+	public class InvaderShipOctopus : InvaderShip
 	{
-		public InvaderShipTwo(Point location, Size range) : base(location, new Size(8, 4), range)
+		public InvaderShipOctopus(Point location, Size range) : base(location, new Size(8, 4), range)
 		{
-			Load(@"invaders\resources\alien2.txt", Point.Empty);
+			timer.Interval = 250;
+			Show.Load(@"invaders\resources\alien_octopus.txt", Size);
+		}
+	}
+
+
+
+	public class InvaderShipUFO : InvaderShip
+	{
+		public InvaderShipUFO(Point location, Size range) : base(location, new Size(16, 3), range)
+		{
+			timer.Interval = 50;
+			Show.Load(@"invaders\resources\alien_ufo.txt", Size);
 		}
 	}
 
@@ -227,7 +284,7 @@ namespace Game.Invaders
 	{
 		public Missile(Point location, int range) : base(location, -1, range)
 		{
-			SetBrick(Point.Empty, Brick.From('!', ConsoleColor.Red));
+			SetBrick(Point.Empty, Brick.From('!', ConsoleColor.Blue));
 		}
 	}
 
@@ -237,7 +294,9 @@ namespace Game.Invaders
 	{
 		public Bomb(Point location, int range) : base(location, +1, range)
 		{
-			SetBrick(Point.Empty, Brick.From('¡', ConsoleColor.Red));
+			UpdateInterval = 100;
+
+			SetBrick(Point.Empty, Brick.From(ColorConsole.CharMap['¥'], ConsoleColor.Red));
 		}
 	}
 
@@ -277,7 +336,4 @@ namespace Game.Invaders
 				brick.Char = stages[stage - 1];
 		}
 	}
-
-
-
 }

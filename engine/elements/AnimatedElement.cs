@@ -3,22 +3,30 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Game
 {
 	public abstract class AnimatedElement : Element
 	{
+		protected Timer timer;
+
 		public Slideshow Show { get; private set; }
+
 
 		public AnimatedElement(Point location, Size size) : base(location, size)
 		{
+			timer = new Timer(1000);
 			Show = new Slideshow();
 		}
 
+
 		protected override void UpdateCore()
 		{
-			Show.Next();
+			if(timer.Passed())
+			{
+				Show.Next();
+				timer.Reset();
+			}
 			Show.Draw(this, Point.Empty);
 		}
 	}
