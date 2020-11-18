@@ -75,6 +75,11 @@ namespace Game.Invaders
 		{
 			var logo = new Element(new Point(2, 5), new Size(World.Size.Width, 18));
 			logo.Load(Path.Combine(Environment.CurrentDirectory, @"invaders\resources\banner.txt"), Point.Empty, ConsoleColor.DarkGreen);
+			logo.Scan((brick, point) => {
+				if(brick != null && brick.Char == '#')
+					brick.ForeColor = ConsoleColor.Green;
+			});
+			
 			//
 			World.Elements.Add(logo);
 
@@ -171,13 +176,26 @@ namespace Game.Invaders
 					var collisions = missile.Collisions(barrier);
 					if(collisions.Count > 0)
 					{
-						barrier.Hit(new Point(collisions[0].X - barrier.Location.X, collisions[0].Y - barrier.Location.Y));
 						missile.Explode();
+						barrier.Hit(new Point(collisions[0].X - barrier.Location.X, collisions[0].Y - barrier.Location.Y));
 					}
 				}
 
 				// with defender
-				//...
+				if(missile.GetType() == typeof(Bomb))
+				{
+					var collisions = missile.Collisions(defender);
+					if(collisions.Count > 0)
+					{
+						missile.Explode();
+						defender.Player.Lives--;
+						if(defender.Player.Lives > 0)
+							defender.Hit(collisions[0]);
+						else
+							World.PostMessage(new WorldMessage { Name = MessageName.GameOver });
+
+					}
+				}
 
 				// with invaders
 				if(missile.GetType() == typeof(Missile))

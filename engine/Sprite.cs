@@ -92,13 +92,18 @@ namespace Game
 		public Timer UpdateTimer { get; protected set; }
 
 
-
+		/// <summary>
+		/// Process players commands. Default implementation store commands in a queue.
+		/// </summary>
 		public virtual void Process(Command command)
 		{
 			if(Enabled)
 				Commands.Enqueue(command);
 		}
 
+		/// <summary>
+		/// Update element.
+		/// </summary>
 		public virtual void Update()
 		{
 			if(!Enabled) return;
@@ -110,6 +115,9 @@ namespace Game
 			}
 		}
 
+		/// <summary>
+		/// Override this in derived classes to update element.
+		/// </summary>
 		protected virtual void UpdateCore() { }
 	}
 }

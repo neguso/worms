@@ -3,7 +3,7 @@ using System;
 namespace Game
 {
 	/// <summary>
-	/// General commands used by games.
+	/// Predefined commands used by games.
 	/// </summary>
 	public class Command
 	{

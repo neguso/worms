@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Game
 {
+	/// <summary>
+	///  Represe
+	/// </summary>
 	public class ScrollingText : Element
 	{
 		protected Queue<char> queue;
@@ -13,8 +16,10 @@ namespace Game
 		public ScrollingText(string label, Point location, int width) : base(location, new Size(width, 1))
 		{
 			Label = label;
+			Foreground = ConsoleColor.White;
+			Background = ConsoleColor.Black;
 			Step = 1;
-			UpdateTimer.Interval = 0;
+			UpdateTimer.Reset(50);
 
 			queue = new Queue<char>(label.ToCharArray());
 			while(queue.Count < Size.Width)
@@ -23,13 +28,18 @@ namespace Game
 
 
 		public string Label { get; set; }
+
+		public ConsoleColor Foreground { get; set; }
+
+		public ConsoleColor Background { get; set; }
+
 		public int Step { get; set; }
 
 
 		protected override void UpdateCore()
 		{
-			var text = new String(queue.ToArray());
-			Text(Point.Empty, text.Substring(0, Math.Min(text.Length, Size.Width)));
+			var text = new string(queue.ToArray());
+			Text(Point.Empty, text.Substring(0, Math.Min(text.Length, Size.Width)), Foreground, Background);
 
 			// shift text
 			for(int i = 0; i < Step; i++)

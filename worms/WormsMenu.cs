@@ -8,7 +8,7 @@ namespace Game.Worms
 	{
 		public WormsMenu(Point location) : base(location, new Size(25, 5))
 		{
-			UpdateTimer.Interval = 10;
+			UpdateTimer.Reset(10);
 
 			Items.AddRange(new MenuItem[] {
 				new MenuItem("new_game_1", "1 Player"),

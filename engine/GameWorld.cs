@@ -13,11 +13,6 @@ namespace Game
 	{
 		protected Queue<WorldMessage> messages;
 
-		public bool Active { get; set; }
-		public Size Size { get; private set; }
-		public List<Player> Players { get; private set; }
-		public List<Element> Elements { get; private set; }
-
 
 		public GameWorld(Size size)
 		{
@@ -28,6 +23,12 @@ namespace Game
 			Players = new List<Player>();
 			Elements = new List<Element>();
 		}
+
+
+		public bool Active { get; set; }
+		public Size Size { get; private set; }
+		public List<Player> Players { get; private set; }
+		public List<Element> Elements { get; private set; }
 
 
 		public virtual void PostMessage(WorldMessage message)
@@ -48,23 +49,24 @@ namespace Game
 			// process world messages
 			if(messages.Count > 0)
 				ProcessMessage(messages.Dequeue());
-			if(keys.Count() > 0)
-			{ 
-			}
-			Players.ForEach(player =>
-			{
-				// get player commands
-				var commands = Decode(keys, player);
-				foreach(var command in commands)
-				{
-					// send commands to player
-					player.Process(command);
 
-					// send commands to player elements
-					var elements = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
-					elements.ForEach(element => element.Process(command));
-				}				
-			});
+			if(keys.Count() > 0)
+			{
+				Players.ForEach(player =>
+				{
+					// get player commands
+					var commands = Decode(keys, player);
+					foreach(var command in commands)
+					{
+						// send commands to player
+						player.Process(command);
+
+						// send commands to player elements
+						var elements = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
+						elements.ForEach(element => element.Process(command));
+					}
+				});
+			}
 
 			// update world elements
 			Elements.ForEach(element => element.Update());

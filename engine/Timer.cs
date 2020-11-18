@@ -9,24 +9,35 @@ namespace Game
 	{
 		private DateTime start;
 
-		public int Interval { get; set; }
-
 
 		public Timer(int interval)
 		{
 			Interval = interval;
-			start = DateTime.MinValue;
+			start = DateTime.Now.AddMilliseconds(-Interval);
 		}
 
+
+		public int Interval { get; private set; }
+
+		public bool Passed
+		{
+			get { return (DateTime.Now - start).TotalMilliseconds >= Interval; }
+		}
+
+		public int Count
+		{
+			get { return (int)Math.Floor((DateTime.Now - start).TotalMilliseconds / Interval); }
+		}
 
 		public void Reset()
 		{
 			start = DateTime.Now;
 		}
 
-		public bool Passed
+		public void Reset(int interval)
 		{
-			get { return (DateTime.Now - start).TotalMilliseconds > Interval; }
+			Interval = interval;
+			start = DateTime.Now.AddMilliseconds(-Interval);
 		}
 	}
 }

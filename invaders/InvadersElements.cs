@@ -30,7 +30,9 @@ namespace Game.Invaders
 	{
 		protected List<Missile> missiles;
 		protected Timer fireTimer;
-
+		protected Timer explodingTimer;
+		protected readonly ConsoleColor[] exploding = new ConsoleColor[] { ConsoleColor.Red, ConsoleColor.DarkRed, ConsoleColor.DarkGray };
+		protected int explodingIndex = 0;
 
 
 		public DefenderShip(Player player, Point location, Size range) : base(location, new Size(7, 2))
@@ -39,12 +41,17 @@ namespace Game.Invaders
 			Range = range;
 			missiles = new List<Missile>();
 			Load(@"invaders\resources\defender1.txt", Point.Empty);
-			UpdateTimer.Interval = 50;
+			UpdateTimer.Reset(50);
 			fireTimer = new Timer(300);
+			explodingTimer = new Timer(200);
 		}
 
 
+		public ShipStatus Status { get; protected set; }
+
 		public Size Range { get; private set; }
+
+		public Player Player => Players[0];
 
 
 		public void Move(int delta)
@@ -69,17 +76,59 @@ namespace Game.Invaders
 			return list;
 		}
 
+		public void Hit(Point location)
+		{
+			Status = ShipStatus.Exploding;
+			explodingTimer.Reset();
+		}
+
+		public override List<Point> GetBody()
+		{
+			var list = new List<Point>();
+			for(int x = 0; x < buffer.GetLength(0); x++)
+				for(int y = 0; y < buffer.GetLength(1); y++)
+				{
+					var brick = buffer[x, y];
+					if(brick != null)
+						list.Add(new Point(Location.X + x, Location.Y + y));
+				}
+			return list;
+		}
+
 		protected override void UpdateCore()
 		{
 			// commands containts all pressed keys
+			switch(Status)
+			{
+				case ShipStatus.Normal:
+					if(Commands.Contains(Command.Left))
+						Move(-1);
+					if(Commands.Contains(Command.Right))
+						Move(+1);
+					if(Commands.Contains(Command.Fire))
+						Fire();
+					Commands.Clear();
+					break;
 
-			if(Commands.Contains(Command.Left))
-				Move(-1);
-			if(Commands.Contains(Command.Right))
-				Move(+1);
-			if(Commands.Contains(Command.Fire))
-				Fire();
-			Commands.Clear();
+				case ShipStatus.Exploding:
+					if(explodingTimer.Count < 10)
+					{
+						Scan((brick, point) => { if(brick != null) brick.ForeColor = explodingTimer.Count % 2 == 0 ? ConsoleColor.White : ConsoleColor.DarkGray ; });
+					}
+					else
+					{
+						Status = ShipStatus.Normal;
+						Scan((brick, point) => { if(brick != null) brick.ForeColor = ConsoleColor.White; });
+					}
+					break;
+			}
+		}
+
+
+		public enum ShipStatus
+		{
+			Normal,
+			Exploding
 		}
 	}
 
@@ -88,20 +137,23 @@ namespace Game.Invaders
 	public abstract class InvaderShip : AnimatedElement
 	{
 		protected List<Bomb> bombs;
-		protected ConsoleColor[] exploding = new ConsoleColor[] { ConsoleColor.DarkRed, ConsoleColor.DarkGray, ConsoleColor.Gray };
-
-		public ShipStatus Status { get; protected set; }
-		public Size Range { get; private set; }
+		protected ConsoleColor[] exploding = new ConsoleColor[] { ConsoleColor.DarkGray, ConsoleColor.DarkRed, ConsoleColor.Red };
 
 
 		public InvaderShip(Point location, Size size, Size range) : base(location, size)
 		{
+			ZIndex = 1; // draw invaders on top of bariers
+
 			bombs = new List<Bomb>();
 			Range = range;
 
 			Status = ShipStatus.Normal;
-			UpdateTimer.Interval = 100;
+			UpdateTimer.Reset(100);
 		}
+
+
+		public ShipStatus Status { get; protected set; }
+		public Size Range { get; private set; }
 
 
 		public void Move(Size distance)
@@ -188,7 +240,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipCrab(Point location, Size range) : base(location, new Size(10, 5), range)
 		{
-			timer.Interval = 750;
+			timer.Reset(750);
 			Show.Load(@"invaders\resources\alien_crab.txt", Size);
 		}
 	}
@@ -199,7 +251,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipOctopus(Point location, Size range) : base(location, new Size(8, 4), range)
 		{
-			timer.Interval = 250;
+			timer.Reset(250);
 			Show.Load(@"invaders\resources\alien_octopus.txt", Size);
 		}
 	}
@@ -210,7 +262,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipUFO(Point location, Size range) : base(location, new Size(16, 3), range)
 		{
-			timer.Interval = 50;
+			timer.Reset(50);
 			Show.Load(@"invaders\resources\alien_ufo.txt", Size);
 		}
 	}
@@ -228,11 +280,12 @@ namespace Game.Invaders
 
 		public Projectile(Point location, int direction, int range) : base(location, new Size(1, 1))
 		{
+			ZIndex = 2; // draw projectiles on top of invaders
 			State = MissileState.Lauched;
 			Direction = direction;
 			Range = range;
 
-			UpdateTimer.Interval = 50;
+			UpdateTimer.Reset(50);
 
 			SetBrick(Point.Empty, Brick.From('^', ConsoleColor.Red));
 		}
@@ -293,7 +346,7 @@ namespace Game.Invaders
 	{
 		public Bomb(Point location, int range) : base(location, +1, range)
 		{
-			UpdateTimer.Interval = 100;
+			UpdateTimer.Reset(100);
 
 			SetBrick(Point.Empty, Brick.From(ColorConsole.CharMap['¥'], ConsoleColor.Red));
 		}

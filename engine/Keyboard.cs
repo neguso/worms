@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Game
 {
+	/// <summary>
+	/// Represent the physical keyboard used to get user input.
+	/// </summary>
 	public class Keyboard
 	{
 
@@ -31,9 +34,9 @@ namespace Game
 			var ary = new List<ConsoleKey>();
 			for(int i = 0; i < 256; i++)
 			{
-				// map down keys to ConsoleKey enum
-				var key = keys[i];
-				if((key & 0x80) != 0 && Enum.IsDefined(typeof(ConsoleKey), (int)key))
+				 // map down keys to ConsoleKey enum
+				 var key = keys[i];
+				if((key & 0x80) != 0 && Enum.IsDefined(typeof(ConsoleKey), i))
 					ary.Add((ConsoleKey)i);
 			}
 			return ary;
