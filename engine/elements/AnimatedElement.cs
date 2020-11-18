@@ -6,39 +6,42 @@ using System.Linq;
 
 namespace Game
 {
+	/// <summary>
+	/// Represent an element that is animated using a sequence of slides.
+	/// </summary>
 	public abstract class AnimatedElement : Element
 	{
 		protected Timer timer;
 
-		public Slideshow Show { get; private set; }
-
 
 		public AnimatedElement(Point location, Size size) : base(location, size)
 		{
-			timer = new Timer(1000);
+			timer = new Timer(50);
 			Show = new Slideshow();
 		}
 
 
+		public Slideshow Show { get; private set; }
+
+
 		protected override void UpdateCore()
 		{
-			if(timer.Passed())
+			if(timer.Passed)
 			{
 				Show.Next();
+				Show.Draw(this, Point.Empty);
 				timer.Reset();
 			}
-			Show.Draw(this, Point.Empty);
 		}
 	}
 
 
 
+	/// <summary>
+	/// Represent a set of slides used to create an animation.
+	/// </summary>
 	public class Slideshow
 	{
-		public List<Brick[,]> Slides { get; private set; }
-		public int Active;
-
-
 		public Slideshow()
 		{
 			Slides = new List<Brick[,]>();
@@ -46,6 +49,13 @@ namespace Game
 		}
 
 
+		public List<Brick[,]> Slides { get; private set; }
+		public int Active { get; set; }
+
+
+		/// <summary>
+		/// Load slides from a file.
+		/// </summary>
 		public void Load(string file, Size size, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
 		{
 			var lines = File.ReadLines(file).Select(l => l.Substring(0, Math.Min(size.Width, l.Length))).ToArray();
@@ -65,13 +75,12 @@ namespace Game
 			}
 		}
 
-
 		/// <summary>
 		/// Draw active slide into frame.
 		/// </summary>
 		public void Draw(Frame frame, Point location)
 		{
-			if(Slides.Count > 0)
+			if(Slides.Count > 0 && Active >= 0 && Active < Slides.Count)
 				frame.Load(Slides[Active], location);
 		}
 
@@ -83,8 +92,7 @@ namespace Game
 			if(Slides.Count > 0)
 			{
 				Active++;
-				if(Active >= Slides.Count)
-					Active = 0;
+				Active %= Slides.Count;
 			}
 		}
 	}

@@ -14,7 +14,7 @@ namespace Game
 		{
 			Label = label;
 			Step = 1;
-			UpdateInterval = 0;
+			UpdateTimer.Interval = 0;
 
 			queue = new Queue<char>(label.ToCharArray());
 			while(queue.Count < Size.Width)

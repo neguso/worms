@@ -13,8 +13,8 @@ namespace Game.Invaders
 			PostMessage(new WorldMessage { Name = MessageName.ShowIntro });
 		}
 
-
 		public GameLevel Level { get; protected set; }
+
 
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
@@ -217,11 +217,9 @@ namespace Game.Invaders
 
 		public class InvaderFleet
 		{
-			private DateTime lastUpdate;
-
 			public List<InvaderShip> Invaders { get; private set; }
 			public MovingDirection Direction;
-			public int UpdateInterval;
+			public Timer UpdateTimer;
 			public Size Range;
 
 
@@ -229,14 +227,12 @@ namespace Game.Invaders
 			{
 				Invaders = invaders;
 				Range = range;
-				UpdateInterval = 750;
-				lastUpdate = DateTime.MinValue;
+				UpdateTimer = new Timer(750);
 			}
 
 			public void Move()
 			{
-				var elapsed = (DateTime.Now - lastUpdate).TotalMilliseconds;
-				if(elapsed > UpdateInterval)
+				if(UpdateTimer.Passed)
 				{
 					// calculate moving distance and direction
 					var distance = new Size(0, 0);
@@ -270,7 +266,7 @@ namespace Game.Invaders
 					foreach(var invader in Invaders)
 						invader.Move(distance);
 
-					lastUpdate = DateTime.Now;
+					UpdateTimer.Reset();
 				}
 			}
 

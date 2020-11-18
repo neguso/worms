@@ -7,30 +7,26 @@ namespace Game
 	/// </summary>
 	public sealed class Timer
 	{
-		private DateTime lastCheck;
+		private DateTime start;
 
 		public int Interval { get; set; }
 
 
-		public Timer(int interval = 50)
+		public Timer(int interval)
 		{
 			Interval = interval;
+			start = DateTime.MinValue;
 		}
 
 
 		public void Reset()
 		{
-			lastCheck = DateTime.Now;
+			start = DateTime.Now;
 		}
 
-		public bool Passed()
+		public bool Passed
 		{
-			return (DateTime.Now - lastCheck).TotalMilliseconds > Interval;
-		}
-
-		public bool Passed(int interval)
-		{
-			return (DateTime.Now - lastCheck).TotalMilliseconds > interval;
+			get { return (DateTime.Now - start).TotalMilliseconds > Interval; }
 		}
 	}
 }

@@ -71,7 +71,15 @@ namespace Game
 	public class Element : Sprite
 	{
 		protected Queue<Command> Commands { get; private set; }
-		protected DateTime LastUpdated = DateTime.MinValue;
+		
+
+		public Element(Point location, Size size) : base(location, size)
+		{
+			Commands = new Queue<Command>();
+			Players = new List<Player>();
+			UpdateTimer = new Timer(100);
+		}
+
 
 		/// <summary>
 		/// Players controlling this element.
@@ -79,22 +87,11 @@ namespace Game
 		public List<Player> Players { get; private set; }
 
 		/// <summary>
-		/// Time interval in miliseconds to update the element.
+		/// Timer used for update interval.
 		/// </summary>
-		public int UpdateInterval { get; set; } = 100;
+		public Timer UpdateTimer { get; protected set; }
 
 
-		public Element(Point location, Size size) : base(location, size)
-		{
-			Commands = new Queue<Command>();
-			Players = new List<Player>();
-		}
-
-
-		public bool UpdatePending
-		{
-			get { return (DateTime.Now - LastUpdated).TotalMilliseconds > UpdateInterval; }
-		}
 
 		public virtual void Process(Command command)
 		{
@@ -106,10 +103,10 @@ namespace Game
 		{
 			if(!Enabled) return;
 
-			if(UpdatePending)
+			if(UpdateTimer.Passed)
 			{
 				UpdateCore();
-				LastUpdated = DateTime.Now;
+				UpdateTimer.Reset();
 			}
 		}
 

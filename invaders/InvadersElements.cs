@@ -29,10 +29,8 @@ namespace Game.Invaders
 	public class DefenderShip : Element
 	{
 		protected List<Missile> missiles;
-		protected int fireInterval;
-		protected DateTime lastFired;
+		protected Timer fireTimer;
 
-		public Size Range { get; private set; }
 
 
 		public DefenderShip(Player player, Point location, Size range) : base(location, new Size(7, 2))
@@ -41,10 +39,12 @@ namespace Game.Invaders
 			Range = range;
 			missiles = new List<Missile>();
 			Load(@"invaders\resources\defender1.txt", Point.Empty);
-			UpdateInterval = 50;
-			fireInterval = 300;
-			lastFired = DateTime.MinValue;
+			UpdateTimer.Interval = 50;
+			fireTimer = new Timer(300);
 		}
+
+
+		public Size Range { get; private set; }
 
 
 		public void Move(int delta)
@@ -55,12 +55,11 @@ namespace Game.Invaders
 
 		public void Fire()
 		{
-			var now = DateTime.Now;
-			var duration = (now - lastFired).TotalMilliseconds;
-			if(duration < fireInterval) return;
-
-			missiles.Add(new Missile(new Point(Location.X + 3, Location.Y - 1), Range.Height - 3));
-			lastFired = now;
+			if(fireTimer.Passed)
+			{
+				missiles.Add(new Missile(new Point(Location.X + 3, Location.Y - 1), Range.Height - 3));
+				fireTimer.Reset();
+			}
 		}
 
 		public List<Missile> GetMissiles()
@@ -101,7 +100,7 @@ namespace Game.Invaders
 			Range = range;
 
 			Status = ShipStatus.Normal;
-			UpdateInterval = 100;
+			UpdateTimer.Interval = 100;
 		}
 
 
@@ -233,7 +232,7 @@ namespace Game.Invaders
 			Direction = direction;
 			Range = range;
 
-			UpdateInterval = 50;
+			UpdateTimer.Interval = 50;
 
 			SetBrick(Point.Empty, Brick.From('^', ConsoleColor.Red));
 		}
@@ -294,7 +293,7 @@ namespace Game.Invaders
 	{
 		public Bomb(Point location, int range) : base(location, +1, range)
 		{
-			UpdateInterval = 100;
+			UpdateTimer.Interval = 100;
 
 			SetBrick(Point.Empty, Brick.From(ColorConsole.CharMap['¥'], ConsoleColor.Red));
 		}

@@ -281,7 +281,7 @@ namespace Game.Worms
 					else
 					{
 						worm.Grow += Food.Length;
-						worm.UpdateInterval -= Food.Speed;
+						worm.UpdateTimer.Interval -= Food.Speed;
 						PlaceFood();
 					}
 				}
