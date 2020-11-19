@@ -22,7 +22,7 @@ namespace Game
 			Size = size;
 			Players = new List<Player>();
 			Elements = new List<Element>();
-			HiScores = new ScoreBoard();
+			HighScores = new ScoreTable();
 		}
 
 
@@ -30,7 +30,7 @@ namespace Game
 		public Size Size { get; private set; }
 		public List<Player> Players { get; private set; }
 		public List<Element> Elements { get; private set; }
-		public ScoreBoard HiScores { get; private set; }
+		public ScoreTable HighScores { get; private set; }
 
 
 		public virtual void PostMessage(WorldMessage message)
@@ -86,13 +86,13 @@ namespace Game
 		{
 			if(!File.Exists(filename)) return false;
 
-			HiScores = ScoreBoard.Load(filename);
+			HighScores = ScoreTable.Load(filename);
 			return true;
 		}
 
 		public virtual void SaveScores(string filename)
 		{
-			HiScores.Save(filename);
+			HighScores.Save(filename);
 		}
 	}
 

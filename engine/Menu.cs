@@ -7,14 +7,14 @@ namespace Game
 {
 	public abstract class Menu<ItemType> : Element where ItemType : MenuItem
 	{
-		public List<ItemType> Items { get; private set; }
-		public ItemType Selected { get; set; }
-
-
 		public Menu(Point location, Size size) : base(location, size)
 		{
 			Items = new List<ItemType>();
 		}
+
+
+		public List<ItemType> Items { get; private set; }
+		public ItemType Selected { get; set; }
 
 
 		protected void SelectPrev()

@@ -85,6 +85,9 @@ namespace Game
 		}
 
 
+		public string Id { get; set; }
+
+
 		/// <summary>
 		/// Players controlling this element.
 		/// </summary>

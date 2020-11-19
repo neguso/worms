@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 
-namespace Game.Worms
+namespace Game.Invaders
 {
-	public class WormsMenu : Menu<MenuItem>
+	public class InvadersMenu : Menu<MenuItem>
 	{
-		public WormsMenu(Point location) : base(location, new Size(25, 5))
+		public InvadersMenu(Point location) : base(location, new Size(25, 5))
 		{
 			UpdateTimer.Reset(20);
 
 			Items.AddRange(new MenuItem[] {
 				new MenuItem("new_game_1", "1 Player"),
 				new MenuItem("new_game_2", "2 Players"),
+				new MenuItem("show_help", "Help"),
 				new MenuItem("quit_game", "Quit"),
 			});
 			Selected = Items[0];

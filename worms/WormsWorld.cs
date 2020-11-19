@@ -143,10 +143,6 @@ namespace Game.Worms
 			menu.Players.Add(host);
 			//
 			World.Elements.Add(menu);
-
-
-			var worm = new Worm(host, World.Size, new Point(10, 10), MovingDirection.Right);
-			World.Elements.Add(worm);
 		}
 
 		public override void Uninstall()

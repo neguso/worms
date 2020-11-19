@@ -1,77 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Drawing;
+using System.Text;
 
 namespace Game
 {
-	[Serializable]
-	public class ScoreBoard
+	public class ScoreBoard : Element
 	{
-		public Score[] Scores { get; set; }
-
-		
-		public ScoreBoard()
+		public ScoreBoard(Point location, ScoreTable table) : base(location, new Size(23, 12))
 		{
-			Scores = new Score[10];
-			Init();
+			Table = table;
+
+			Text(new Point(7, 0), "HIGH SCORES");
 		}
 
 
-		public void Init()
-		{
-			for(int i = 0; i < Scores.Length; i++)
-				Scores[i] = new Score();
-		}
+		public ScoreTable Table { get; set; }
 
-		public static ScoreBoard Load(string filename)
+
+		protected override void UpdateCore()
 		{
-			var serializer = new XmlSerializer(typeof(ScoreBoard));
-			using(var stream = new FileStream(filename, FileMode.Open))
+			for(int i = 0; i < Table.Scores.Length; i++)
 			{
-				var obj = serializer.Deserialize(stream) as ScoreBoard;
-				stream.Close();
-				return obj;
+				Text(new Point(0, i + 2), $"{(i + 1).ToString().PadLeft(2)}. {Table.Scores[i].Player.PadRight(13, '.')}{Table.Scores[i].Value:N0}");
 			}
-		}
-
-		public void Save(string filename)
-		{
-			var serializer = new XmlSerializer(GetType());
-			using(var stream = new StreamWriter(filename))
-			{
-				serializer.Serialize(stream, this);
-				stream.Close();
-			}
-		}
-
-		public void Record(string player, int value)
-		{
-			var list = Scores.ToList();
-			if(value >= list.Min(s => s.Value))
-			{
-				list.Add(new Score { Player = player, Value = value, Date = DateTime.Today });
-				list.Sort((a, b) => a.Value < b.Value ? 1 : (a.Value > b.Value ? -1 : 0));
-				Scores = list.Take(10).ToArray();
-			}
-		}
-
-
-
-		public class Score
-		{
-			public Score()
-			{
-				Player = "AAA";
-				Value = 0;
-				Date = DateTime.MinValue;
-			}
-
-			public string Player { get; set; }
-			public int Value { get; set; }
-			public DateTime Date { get; set; }
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace Game.Invaders
 			switch(message.Name)
 			{
 				case MessageName.ShowIntro: LoadLevel(new IntroLevel(this)); break;
-				//case MessageName.ShowMenu: LoadLevel(new MenuLevel(this)); break;
+				case MessageName.ShowMenu: LoadLevel(new MenuLevel(this)); break;
 				case MessageName.StartGame: LoadLevel(new InvadersGameLevel(this, 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\level1"))); break;
 				//case MessageName.NextLevel: NextGameLevel(); break;
 				//case MessageName.GameOver: LoadLevel(new LostLevel(this)); break;
@@ -96,9 +96,66 @@ namespace Game.Invaders
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
 			if(keys.Count() > 0)
-				World.PostMessage(new WorldMessage { Name = MessageName.StartGame });
+				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
+
+
+
+	public class MenuLevel : GameLevel
+	{
+
+
+		public MenuLevel(InvadersWorld world) : base(world)
+		{ }
+
+
+		public override void Install()
+		{
+			var host = new InvadersHost(World)
+			{
+				KeyMap = new KeyboardKeyMap[]
+				{
+						new KeyboardKeyMap(ConsoleKey.Escape, Command.Escape),
+						new KeyboardKeyMap(ConsoleKey.Enter, Command.Enter),
+						new KeyboardKeyMap(ConsoleKey.UpArrow, Command.Up),
+						new KeyboardKeyMap(ConsoleKey.DownArrow, Command.Down)
+				}
+			};
+			//
+			World.Players.Add(host);
+
+			var logo = new Element(new Point(2, 5), new Size(World.Size.Width, 18));
+			logo.Load(Path.Combine(Environment.CurrentDirectory, @"invaders\resources\banner.txt"), Point.Empty, ConsoleColor.DarkGreen);
+			//
+			World.Elements.Add(logo);
+
+			var menu = new InvadersMenu(new Point(20, 28));
+			menu.Players.Add(host);
+			//
+			World.Elements.Add(menu);
+
+			var board = new ScoreBoard(new Point(60, 25), World.HighScores);
+			World.Elements.Add(board);
+		}
+
+		public override void Uninstall()
+		{
+			World.Players.Clear();
+			World.Elements.Clear();
+		}
+
+		public override void Tick(IEnumerable<ConsoleKey> keys)
+		{
+			var host = World.Players[0] as InvadersHost;
+
+			if(host.Action == InvadersHost.MenuAction.Quit)
+				World.PostMessage(new WorldMessage { Name = MessageName.Quit });
+
+
+		}
+	}
+
 
 
 	public class InvadersGameLevel : GameLevel
@@ -318,6 +375,7 @@ namespace Game.Invaders
 	}
 
 
+
 	public class LostLevel : GameLevel
 	{
 		public LostLevel(GameWorld world) : base(world)
@@ -346,6 +404,7 @@ namespace Game.Invaders
 	}
 
 
+
 	public class WinLevel : GameLevel
 	{
 		public WinLevel(GameWorld world) : base(world)
@@ -372,7 +431,6 @@ namespace Game.Invaders
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
-
 
 
 

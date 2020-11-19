@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Game.Worms
+namespace Game.Invaders
 {
-	public class WormsHost : Player
+	public class InvadersHost : Player
 	{
 		protected GameWorld world;
 
 
-		public WormsHost(GameWorld world)
+		public InvadersHost(GameWorld world)
 		{
 			this.world = world;
 		}
@@ -23,11 +25,12 @@ namespace Game.Worms
 			else if(command == Command.Enter)
 			{
 				// get menu
-				var menu = world.Elements.Find(e => e.GetType().Equals(typeof(WormsMenu))) as WormsMenu;
+				var menu = world.Elements.Find(e => e.Id == "MainMenu") as InvadersMenu;
 				switch(menu.Selected.Id)
 				{
 					case "new_game_1": Action = MenuAction.NewGame1; break;
 					case "new_game_2": Action = MenuAction.NewGame2; break;
+					case "show_help": Action = MenuAction.Help; break;
 					case "quit_game": Action = MenuAction.Quit; break;
 				}
 			}
@@ -39,7 +42,8 @@ namespace Game.Worms
 			None,
 			Quit,
 			NewGame1,
-			NewGame2
+			NewGame2,
+			Help
 		}
 	}
 }
