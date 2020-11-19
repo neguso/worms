@@ -75,8 +75,8 @@ namespace Game.Invaders
 		{
 			var logo = new Element(new Point(2, 5), new Size(World.Size.Width, 18));
 			logo.Load(Path.Combine(Environment.CurrentDirectory, @"invaders\resources\banner.txt"), Point.Empty, ConsoleColor.DarkGreen);
-			logo.Scan((brick, point) => {
-				if(brick != null && brick.Char == '#')
+			logo.Scan((brick, x, y) => {
+				if(brick.Char == '#')
 					brick.ForeColor = ConsoleColor.Green;
 			});
 			
@@ -108,7 +108,7 @@ namespace Game.Invaders
 		protected Arena Arena;
 		protected DefenderShip defender;
 		protected List<InvaderShip> invaders;
-		protected InvaderFleet fleet;
+		protected InvadersController fleet;
 
 
 		public InvadersGameLevel(GameWorld world, int level, LevelConfig config) : base(world)
@@ -121,6 +121,7 @@ namespace Game.Invaders
 
 		public override void Install()
 		{
+			// create player
 			var player = new Player()
 			{
 				Index = 1,
@@ -137,15 +138,19 @@ namespace Game.Invaders
 			};
 			World.Players.Add(player);
 
+			// create arena
 			Arena = new Arena(Config.DataFolder, new Point(0, 0), new Size(World.Size.Width, World.Size.Height - 2));
 			World.Elements.Add(Arena);
 			
+			// create defender ship
 			defender = new DefenderShip(player, new Point(10, 35), Arena.Size);
 			World.Elements.Add(defender);
 
+			// create barriers
 			for(int b = 0; b < 4; b++)
 				World.Elements.Add(new Barrier(new Point(9 + b * 23, 32)));
 
+			// create invaders ships
 			invaders = new List<InvaderShip>();
 			for(int row = 0; row < 2; row++)
 				for(int col = 0; col < 5; col++)
@@ -156,7 +161,8 @@ namespace Game.Invaders
 			invaders.Add(new InvaderShipUFO(new Point(0, 0), Arena.Size));
 			World.Elements.AddRange(invaders);
 
-			fleet = new InvaderFleet(invaders, Arena.Size);
+			// create invaders fleet controller
+			fleet = new InvadersController(invaders, Arena.Size);
 		}
 
 		public override void Uninstall()
@@ -233,7 +239,7 @@ namespace Game.Invaders
 
 
 
-		public class InvaderFleet
+		public class InvadersController
 		{
 			public List<InvaderShip> Invaders { get; private set; }
 			public MovingDirection Direction;
@@ -241,12 +247,13 @@ namespace Game.Invaders
 			public Size Range;
 
 
-			public InvaderFleet(List<InvaderShip> invaders, Size range)
+			public InvadersController(List<InvaderShip> invaders, Size range)
 			{
 				Invaders = invaders;
 				Range = range;
 				UpdateTimer = new Timer(750);
 			}
+
 
 			public void Move()
 			{

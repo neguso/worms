@@ -28,11 +28,17 @@ namespace Game
 		/// <summary>
 		/// Iterate through frame characters horizontally then vertically.
 		/// </summary>
-		public void Scan(Action<Brick, Point> action)
+		public void Scan(Action<Brick, int, int> action, bool skipEmpty = true)
 		{
 			for(int y = 0; y < buffer.GetLength(1); y++)
 				for(int x = 0; x < buffer.GetLength(0); x++)
-					action(buffer[x, y], new Point(x, y));
+					if(skipEmpty)
+					{ 
+						if(buffer[x, y] != null)
+							action(buffer[x, y], x, y);
+					}
+					else
+						action(buffer[x, y], x, y);
 		}
 
 		/// <summary>
@@ -40,10 +46,8 @@ namespace Game
 		/// </summary>
 		public void Load(Frame frame, Point location)
 		{
-			frame.Scan((brick, point) =>
-			{
-				if(brick != null)
-					SetBrick(new Point(location.X + point.X, location.Y + point.Y), brick);
+			frame.Scan((brick, x, y) => {
+				SetBrick(new Point(location.X + x, location.Y + y), brick);
 			});
 		}
 
@@ -79,10 +83,13 @@ namespace Game
 			}
 		}
 
+		/// <summary>
+		/// Fill element buffer with specified brick.
+		/// </summary>
 		public void Fill(Brick brick)
 		{
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
+			for(int y = 0; y < buffer.GetLength(1); y++)
+				for(int x = 0; x < buffer.GetLength(0); x++)
 					buffer[x, y] = brick;
 		}
 

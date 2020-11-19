@@ -6,9 +6,15 @@ namespace Game.Invaders
 {
 	public class InvadersGame : GenericGame
 	{
+		public const string hiscores = "invaders.xml";
+
+
 		private InvadersGame()
 		{
 			World = new InvadersWorld(screen.Size);
+
+			// load scores
+			World.LoadScores(hiscores);
 		}
 
 
@@ -32,6 +38,9 @@ namespace Game.Invaders
 				screen.Draw(frame);
 			}
 			while(World.Active);
+
+			// save scores
+			World.SaveScores(hiscores);
 		}
 
 

@@ -22,6 +22,7 @@ namespace Game
 			Size = size;
 			Players = new List<Player>();
 			Elements = new List<Element>();
+			HiScores = new ScoreBoard();
 		}
 
 
@@ -29,6 +30,7 @@ namespace Game
 		public Size Size { get; private set; }
 		public List<Player> Players { get; private set; }
 		public List<Element> Elements { get; private set; }
+		public ScoreBoard HiScores { get; private set; }
 
 
 		public virtual void PostMessage(WorldMessage message)
@@ -78,6 +80,19 @@ namespace Game
 		{
 			Elements.Sort((a, b) => a.ZIndex < b.ZIndex ? -1 : (a.ZIndex > b.ZIndex ? 1 : 0));
 			Elements.ForEach(element => element.Draw(frame));
+		}
+
+		public virtual bool LoadScores(string filename)
+		{
+			if(!File.Exists(filename)) return false;
+
+			HiScores = ScoreBoard.Load(filename);
+			return true;
+		}
+
+		public virtual void SaveScores(string filename)
+		{
+			HiScores.Save(filename);
 		}
 	}
 

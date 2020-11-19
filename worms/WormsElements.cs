@@ -55,16 +55,6 @@ namespace Game.Worms
 		{
 			Load(Path.Combine(path, "arena.txt"), Point.Empty);
 		}
-
-		public override List<Point> GetBody()
-		{
-			var list = new List<Point>();
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-					if(buffer[x, y] != null)
-						list.Add(new Point(Location.X + x, Location.Y + y));
-			return list;
-		}
 	}
 
 

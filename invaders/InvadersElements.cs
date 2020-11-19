@@ -12,16 +12,6 @@ namespace Game.Invaders
 		{
 			Load(Path.Combine(path, "arena.txt"), Point.Empty);
 		}
-
-		public override List<Point> GetBody()
-		{
-			var list = new List<Point>();
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-					if(buffer[x, y] != null)
-						list.Add(new Point(Location.X + x, Location.Y + y));
-			return list;
-		}
 	}
 
 
@@ -82,19 +72,6 @@ namespace Game.Invaders
 			explodingTimer.Reset();
 		}
 
-		public override List<Point> GetBody()
-		{
-			var list = new List<Point>();
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-				{
-					var brick = buffer[x, y];
-					if(brick != null)
-						list.Add(new Point(Location.X + x, Location.Y + y));
-				}
-			return list;
-		}
-
 		protected override void UpdateCore()
 		{
 			// commands containts all pressed keys
@@ -113,12 +90,13 @@ namespace Game.Invaders
 				case ShipStatus.Exploding:
 					if(explodingTimer.Count < 10)
 					{
-						Scan((brick, point) => { if(brick != null) brick.ForeColor = explodingTimer.Count % 2 == 0 ? ConsoleColor.White : ConsoleColor.DarkGray ; });
+						// alternate colors
+						Scan((brick, x, y) => { brick.ForeColor = explodingTimer.Count % 2 == 0 ? ConsoleColor.White : ConsoleColor.DarkGray ; });
 					}
 					else
 					{
 						Status = ShipStatus.Normal;
-						Scan((brick, point) => { if(brick != null) brick.ForeColor = ConsoleColor.White; });
+						Scan((brick, x, y) => { brick.ForeColor = ConsoleColor.White; });
 					}
 					break;
 			}
@@ -137,16 +115,17 @@ namespace Game.Invaders
 	public abstract class InvaderShip : AnimatedElement
 	{
 		protected List<Bomb> bombs;
-		protected ConsoleColor[] exploding = new ConsoleColor[] { ConsoleColor.DarkGray, ConsoleColor.DarkRed, ConsoleColor.Red };
+		protected ConsoleColor[] exploding = new ConsoleColor[] {ConsoleColor.Red, ConsoleColor.DarkRed, ConsoleColor.DarkGray };
+		protected Timer explodingTimer;
 
 
 		public InvaderShip(Point location, Size size, Size range) : base(location, size)
 		{
 			ZIndex = 1; // draw invaders on top of bariers
-
 			bombs = new List<Bomb>();
-			Range = range;
+			explodingTimer = new Timer(UpdateTimer.Interval);
 
+			Range = range;
 			Status = ShipStatus.Normal;
 			UpdateTimer.Reset(100);
 		}
@@ -182,19 +161,7 @@ namespace Game.Invaders
 		public void Hit(Point location)
 		{
 			Status = ShipStatus.Exploding;
-		}
-
-		public override List<Point> GetBody()
-		{
-			var list = new List<Point>();
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-				{
-					var brick = buffer[x, y];
-					if(brick != null)
-						list.Add(new Point(Location.X + x, Location.Y + y));
-				}
-			return list;
+			explodingTimer.Reset();
 		}
 
 		protected override void UpdateCore()
@@ -211,13 +178,8 @@ namespace Game.Invaders
 					if(rnd.Next(100) > 95) Fire();
 					break;
 				case ShipStatus.Exploding:
-					if(exploding.Length > 0)
-					{
-						for(int x = 0; x < buffer.GetLength(0); x++)
-							for(int y = 0; y < buffer.GetLength(1); y++)
-								if(buffer[x, y] != null) buffer[x, y].ForeColor = exploding[exploding.Length - 1];
-						Array.Resize(ref exploding, exploding.Length - 1);
-					}
+					if(explodingTimer.Count < 3)
+						Scan((brick, x, y) => { brick.ForeColor = exploding[explodingTimer.Count % 3]; });
 					else
 						Status = ShipStatus.Dead;
 					break;
@@ -363,19 +325,6 @@ namespace Game.Invaders
 			Load(@"invaders\resources\barrier.txt", Point.Empty);
 		}
 
-
-		public override List<Point> GetBody()
-		{
-			var list = new List<Point>();
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-				{
-					var brick = buffer[x, y];
-					if(brick != null)
-						list.Add(new Point(Location.X + x, Location.Y + y));
-				}
-			return list;
-		}
 
 		public void Hit(Point location)
 		{

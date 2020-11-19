@@ -49,13 +49,13 @@ namespace Game
 			var fcolor = ConsoleColor.White;
 			var bcolor = ConsoleColor.Black;
 
-			frame.Scan((brick, point) =>
+			frame.Scan((brick, x, y) =>
 			{
-				if(origin.X + point.X < 0 || origin.X + point.X > Size.Width - 1 || origin.Y + point.Y < 0 || origin.Y + point.Y > Size.Height - 1)
+				if(origin.X + x < 0 || origin.X + x > Size.Width - 1 || origin.Y + y < 0 || origin.Y + y > Size.Height - 1)
 					return;
 
-				if(line != point.Y)
-					sb.Append(ColorConsole.Escape.Location(origin.X + point.X, origin.Y + (line = point.Y)));
+				if(line != y)
+					sb.Append(ColorConsole.Escape.Location(origin.X + x, origin.Y + (line = y)));
 
 				if(brick == null)
 				{
@@ -70,7 +70,7 @@ namespace Game
 
 					sb.Append(brick.Char);
 				}
-			});
+			}, false);
 
 			ColorConsole.Write(sb.ToString());
 

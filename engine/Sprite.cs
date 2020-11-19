@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Game
 {
@@ -29,15 +28,20 @@ namespace Game
 				frame.Load(this, Location);
 		}
 
+		/// <summary>
+		/// Retrieve the element body points used for collision detection.
+		/// Default implementation return non empty bricks.
+		/// </summary>
 		public virtual List<Point> GetBody()
 		{
-			var list = new List<Point>(buffer.GetLength(0) * buffer.GetLength(1));
-			for(int x = 0; x < buffer.GetLength(0); x++)
-				for(int y = 0; y < buffer.GetLength(1); y++)
-					list.Add(new Point(Location.X + x, Location.Y + y));
+			var list = new List<Point>();
+			Scan((brick, x, y) => { list.Add(new Point(Location.X + x, Location.Y + y)); });
 			return list;
 		}
 
+		/// <summary>
+		/// Calculate collisions with supplied element.
+		/// </summary>
 		public virtual List<Point> Collisions(Element element)
 		{
 			return element.GetBody().Intersect(GetBody(), PointEqualityComparer.EqualityComparer).ToList();
