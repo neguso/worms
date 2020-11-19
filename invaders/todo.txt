@@ -1,0 +1,13 @@
+﻿
+
+* game menu
+* game over
+* game finished
+* high score table
+* save score
+* big ship movement
+* big ship firing logic
+* better invaders firing logic
+* second level
+
+
