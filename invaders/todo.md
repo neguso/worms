@@ -3,7 +3,7 @@
 
 ## TODO
 
-- game menu
+* game menu
 - game over
 - game finished
 - high score table

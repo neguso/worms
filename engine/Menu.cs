@@ -43,8 +43,9 @@ namespace Game
 		{
 			if(Commands.Count > 0)
 			{
-				// get next command
+				// get next command, clear the rest
 				var command = Commands.Dequeue();
+				Commands.Clear();
 
 				// act on command
 				if(command == Command.Up)

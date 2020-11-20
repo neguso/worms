@@ -10,7 +10,8 @@ namespace Game.Invaders
 	{
 		public InvadersMenu(Point location) : base(location, new Size(25, 5))
 		{
-			UpdateTimer.Reset(20);
+			Id = "MainMenu";
+			UpdateTimer.Reset(200);
 
 			Items.AddRange(new MenuItem[] {
 				new MenuItem("new_game_1", "1 Player"),
@@ -20,6 +21,8 @@ namespace Game.Invaders
 			});
 			Selected = Items[0];
 		}
+
+
 
 
 		protected override void Draw()

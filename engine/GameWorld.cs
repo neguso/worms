@@ -99,7 +99,7 @@ namespace Game
 
 
 	/// <summary>
-	/// Represent a message that can be sent to a world.
+	/// Represent a generic message that can be sent to a world.
 	/// </summary>
 	public class WorldMessage
 	{

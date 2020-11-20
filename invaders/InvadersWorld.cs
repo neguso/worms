@@ -30,6 +30,7 @@ namespace Game.Invaders
 				case MessageName.ShowIntro: LoadLevel(new IntroLevel(this)); break;
 				case MessageName.ShowMenu: LoadLevel(new MenuLevel(this)); break;
 				case MessageName.StartGame: LoadLevel(new InvadersGameLevel(this, 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\level1"))); break;
+				case MessageName.ShowHelp: LoadLevel(new HelpLevel(this)); break;
 				//case MessageName.NextLevel: NextGameLevel(); break;
 				//case MessageName.GameOver: LoadLevel(new LostLevel(this)); break;
 				case MessageName.Quit: Quit(); break;
@@ -50,7 +51,7 @@ namespace Game.Invaders
 			if(level != null)
 			{
 				if(level.Index < 3)
-					LoadLevel(new InvadersGameLevel(this, level.Index + 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\level" + (level.Index + 1))));
+					LoadLevel(new InvadersGameLevel(this, level.Index + 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\levels")));
 				else
 					LoadLevel(new WinLevel(this));
 			}
@@ -62,6 +63,12 @@ namespace Game.Invaders
 			Level = null;
 			Active = false;
 		}
+	}
+
+
+	public class NewGameMessage : WorldMessage
+	{
+		public int Players;
 	}
 
 
@@ -104,8 +111,6 @@ namespace Game.Invaders
 
 	public class MenuLevel : GameLevel
 	{
-
-
 		public MenuLevel(InvadersWorld world) : base(world)
 		{ }
 
@@ -151,8 +156,10 @@ namespace Game.Invaders
 
 			if(host.Action == InvadersHost.MenuAction.Quit)
 				World.PostMessage(new WorldMessage { Name = MessageName.Quit });
-
-
+			else if(host.Action == InvadersHost.MenuAction.NewGame1)
+				World.PostMessage(new NewGameMessage { Name = MessageName.StartGame, Players = 1 });
+			else if(host.Action == InvadersHost.MenuAction.NewGame2)
+				World.PostMessage(new NewGameMessage { Name = MessageName.StartGame, Players = 2 });
 		}
 	}
 
@@ -295,7 +302,6 @@ namespace Game.Invaders
 
 
 
-
 		public class InvadersController
 		{
 			public List<InvaderShip> Invaders { get; private set; }
@@ -364,6 +370,10 @@ namespace Game.Invaders
 		public class LevelConfig
 		{
 			public string DataFolder;
+			public int Crabs;
+			public int Octopuses;
+			public int UFOs;
+
 
 			public LevelConfig() { }
 
@@ -372,6 +382,19 @@ namespace Game.Invaders
 				DataFolder = path;
 			}
 		}
+	}
+
+
+
+	public class HelpLevel : GameLevel
+	{
+		public HelpLevel(InvadersWorld world) : base(world)
+		{
+
+		}
+
+
+
 	}
 
 
@@ -439,6 +462,7 @@ namespace Game.Invaders
 		public const string ShowIntro = "show_intro";
 		public const string ShowMenu = "show_menu";
 		public const string StartGame = "start_game";
+		public const string ShowHelp = "show_help";
 		public const string Quit = "quit";
 		public const string NextLevel = "next_level";
 		public const string GameOver = "game_over";

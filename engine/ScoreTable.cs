@@ -63,8 +63,8 @@ namespace Game
 		{
 			public Score()
 			{
-				Player = "ABCDEFGHIJ";
-				Value = 44444;
+				Player = "AAA";
+				Value = 0;
 				Date = DateTime.MinValue;
 			}
 

@@ -24,7 +24,7 @@
     <None Update="invaders\resources\defender1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="invaders\resources\level1\arena.txt">
+    <None Update="invaders\resources\levels\arena.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="worms\resources\banner.txt">
