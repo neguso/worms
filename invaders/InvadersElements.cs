@@ -27,6 +27,7 @@ namespace Game.Invaders
 
 		public DefenderShip(Player player, Point location, Size range) : base(location, new Size(7, 2))
 		{
+			InputProcess = InputProcessMode.KeyDown;
 			Players.Add(player);
 			Range = range;
 			missiles = new List<Missile>();

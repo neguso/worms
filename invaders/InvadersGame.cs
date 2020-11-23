@@ -18,30 +18,31 @@ namespace Game.Invaders
 		}
 
 
-		// overriden to get keys currently down
-		public override void Run()
-		{
-			do
-			{
-				// get user input
-				var keys = keyboard.ReadKeyDown();
+		//// overriden to get keys currently down
+		//public override void Run()
+		//{
+		//	do
+		//	{
+		//		// get user input
+		//		var keysPress = keyboard.ReadKeyPress();
+		//		var keysDown = keyboard.ReadKeyDown();
 
-				// process world
-				World.Tick(keys);
+		//		// process world
+		//		World.Tick(keysPress, keysDown);
 
-				// render frame
-				frame.Clear();
-				World.Render(frame);
+		//		// render frame
+		//		frame.Clear();
+		//		World.Render(frame);
 
-				// draw frame on screen
-				screen.WaitRefresh();
-				screen.Draw(frame);
-			}
-			while(World.Active);
+		//		// draw frame on screen
+		//		screen.WaitRefresh();
+		//		screen.Draw(frame);
+		//	}
+		//	while(World.Active);
 
-			// save scores
-			World.SaveScores(hiscores);
-		}
+		//	// save scores
+		//	World.SaveScores(hiscores);
+		//}
 
 
 		public static void Launch()

@@ -22,10 +22,10 @@ namespace Game.Worms
 		public WorldLevel Level { get; protected set; }
 
 
-		public override void Tick(IEnumerable<ConsoleKey> keys)
+		public override void Tick(IEnumerable<ConsoleKey> keysPress, IEnumerable<ConsoleKey> keysDown)
 		{
-			base.Tick(keys);
-			if(Level != null) Level.Tick(keys);
+			base.Tick(keysPress, keysDown);
+			if(Level != null) Level.Tick(keysPress);
 		}
 
 		public override void ProcessMessage(WorldMessage message)

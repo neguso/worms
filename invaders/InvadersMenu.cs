@@ -11,7 +11,7 @@ namespace Game.Invaders
 		public InvadersMenu(Point location) : base(location, new Size(25, 5))
 		{
 			Id = "MainMenu";
-			UpdateTimer.Reset(200);
+			UpdateTimer.Reset(50);
 
 			Items.AddRange(new MenuItem[] {
 				new MenuItem("new_game_1", "1 Player"),

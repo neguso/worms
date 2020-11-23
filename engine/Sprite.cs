@@ -81,11 +81,14 @@ namespace Game
 		{
 			Commands = new Queue<Command>();
 			Players = new List<Player>();
+			InputProcess = InputProcessMode.KeyPress;
+
 			UpdateTimer = new Timer(100);
 		}
 
 
 		public string Id { get; set; }
+		public InputProcessMode InputProcess { get; protected set; }
 
 
 		/// <summary>
@@ -126,5 +129,13 @@ namespace Game
 		/// Override this in derived classes to update element.
 		/// </summary>
 		protected virtual void UpdateCore() { }
+	}
+
+
+
+	public enum InputProcessMode
+	{
+		KeyPress,
+		KeyDown
 	}
 }

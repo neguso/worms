@@ -46,26 +46,43 @@ namespace Game
 			return keys.Join(player.KeyMap, k => k, m => m.Key, (k, m) => m.Command);
 		}
 
-		public virtual void Tick(IEnumerable<ConsoleKey> keys)
+		public virtual void Tick(IEnumerable<ConsoleKey> keysPress, IEnumerable<ConsoleKey> keysDown)
 		{
 			// process world messages
 			if(messages.Count > 0)
 				ProcessMessage(messages.Dequeue());
 
-			if(keys.Count() > 0)
+			// process keys press
+			if(keysPress.Count() > 0)
 			{
 				Players.ForEach(player =>
 				{
 					// get player commands
-					var commands = Decode(keys, player);
+					var commands = Decode(keysPress, player);
 					foreach(var command in commands)
 					{
 						// send commands to player
 						player.Process(command);
 
 						// send commands to player elements
-						var elements = Elements.Where(element => element.Players.Any(p => p.Name == player.Name)).ToList();
-						elements.ForEach(element => element.Process(command));
+						var elements = Elements.Where(e => e.Players.Any(p => p.Name == player.Name) && e.InputProcess == InputProcessMode.KeyPress).ToList();
+						elements.ForEach(e => e.Process(command));
+					}
+				});
+			}
+
+			// process keys down
+			if(keysDown.Count() > 0)
+			{
+				Players.ForEach(player =>
+				{
+					// get player commands
+					var commands = Decode(keysDown, player);
+					foreach(var command in commands)
+					{
+						// send commands to player elements
+						var elements = Elements.Where(e => e.Players.Any(p => p.Name == player.Name) && e.InputProcess == InputProcessMode.KeyDown).ToList();
+						elements.ForEach(e => e.Process(command));
 					}
 				});
 			}

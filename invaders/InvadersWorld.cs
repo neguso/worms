@@ -17,10 +17,10 @@ namespace Game.Invaders
 		public WorldLevel Level { get; protected set; }
 
 
-		public override void Tick(IEnumerable<ConsoleKey> keys)
+		public override void Tick(IEnumerable<ConsoleKey> keysPress, IEnumerable<ConsoleKey> keysDown)
 		{
-			base.Tick(keys);
-			if(Level != null) Level.Tick(keys);
+			base.Tick(keysPress, keysDown);
+			if(Level != null) Level.Tick(keysPress);
 		}
 
 		public override void ProcessMessage(WorldMessage message)
@@ -67,12 +67,6 @@ namespace Game.Invaders
 	}
 
 
-	public class NewGameMessage : WorldMessage
-	{
-		public int Players;
-	}
-
-
 
 	public class IntroLevel : WorldLevel
 	{
@@ -112,7 +106,8 @@ namespace Game.Invaders
 	public class MenuLevel : WorldLevel
 	{
 		public MenuLevel(InvadersWorld world) : base(world)
-		{ }
+		{
+		}
 
 
 		public override void Install()
@@ -179,17 +174,17 @@ namespace Game.Invaders
 			World.Elements.Add(ufo);
 			World.Elements.Add(new StaticText(".......... 100 POINTS", new Point(47, 12)));
 
-			var squid = new InvaderShipSquid(new Point(34, 15), World.Size);
+			var squid = new InvaderShipSquid(new Point(32, 15), World.Size);
 			World.Elements.Add(squid);
-			World.Elements.Add(new StaticText("..........  30 POINTS", new Point(47, 17)));
+			World.Elements.Add(new StaticText("............. 50 POINTS", new Point(45, 17)));
 
-			var crab = new InvaderShipCrab(new Point(36, 20), World.Size);
+			var crab = new InvaderShipCrab(new Point(33, 20), World.Size);
 			World.Elements.Add(crab);
-			World.Elements.Add(new StaticText("..........  20 POINTS", new Point(47, 22)));
+			World.Elements.Add(new StaticText(".............. 20 POINTS", new Point(44, 22)));
 
-			var octopus = new InvaderShipOctopus(new Point(38, 25), World.Size);
+			var octopus = new InvaderShipOctopus(new Point(34, 25), World.Size);
 			World.Elements.Add(octopus);
-			World.Elements.Add(new StaticText("..........  10 POINTS", new Point(47, 27)));
+			World.Elements.Add(new StaticText("............... 10 POINTS", new Point(43, 27)));
 		}
 
 		public override void Uninstall()
@@ -503,5 +498,10 @@ namespace Game.Invaders
 		public const string NextLevel = "next_level";
 		public const string GameOver = "game_over";
 		public const string GameCompleted = "game_completed";
+	}
+
+	public class NewGameMessage : WorldMessage
+	{
+		public int Players;
 	}
 }
