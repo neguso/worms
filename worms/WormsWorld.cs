@@ -19,7 +19,7 @@ namespace Game.Worms
 		}
 
 
-		public GameLevel Level { get; protected set; }
+		public WorldLevel Level { get; protected set; }
 
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
@@ -41,7 +41,7 @@ namespace Game.Worms
 			}
 		}
 
-		protected void LoadLevel(GameLevel level)
+		protected void LoadLevel(WorldLevel level)
 		{
 			if(Level != null)
 				Level.Uninstall();
@@ -84,7 +84,7 @@ namespace Game.Worms
 
 
 
-	public class IntroLevel : GameLevel
+	public class IntroLevel : WorldLevel
 	{
 		public IntroLevel(GameWorld world) : base(world)
 		{ }
@@ -114,7 +114,7 @@ namespace Game.Worms
 	}
 
 
-	public class MenuLevel : GameLevel
+	public class MenuLevel : WorldLevel
 	{
 		public MenuLevel(GameWorld world) : base(world)
 		{ }
@@ -171,7 +171,7 @@ namespace Game.Worms
 	}
 
 
-	public class WormsGameLevel : GameLevel
+	public class WormsGameLevel : WorldLevel
 	{
 		protected LevelConfig Config;
 
@@ -382,7 +382,7 @@ namespace Game.Worms
 	}
 
 
-	public class LostLevel : GameLevel
+	public class LostLevel : WorldLevel
 	{
 		public LostLevel(GameWorld world) : base(world)
 		{
@@ -410,7 +410,7 @@ namespace Game.Worms
 	}
 
 
-	public class WinLevel : GameLevel
+	public class WinLevel : WorldLevel
 	{
 		public WinLevel(GameWorld world) : base(world)
 		{

@@ -111,14 +111,14 @@ namespace Game
 	/// <summary>
 	/// Represent a abstract game level in a world.
 	/// </summary>
-	public abstract class GameLevel
+	public abstract class WorldLevel
 	{
 		public int Index { get; set; }
 		public string Name { get; set; }
 		public GameWorld World { get; protected set; }
 
 
-		public GameLevel(GameWorld world, string name = "undefined", int index = 0)
+		public WorldLevel(GameWorld world, string name = "undefined", int index = 0)
 		{
 			Name = name;
 			Index = index;

@@ -198,12 +198,23 @@ namespace Game.Invaders
 
 
 
+	public class InvaderShipSquid : InvaderShip
+	{
+		public InvaderShipSquid(Point location, Size range) : base(location, new Size(12, 5), range)
+		{
+			timer.Reset(1250);
+			Show.Load(@"invaders\resources\alien_squid.txt", Size, ConsoleColor.Green);
+		}
+	}
+
+
+
 	public class InvaderShipCrab : InvaderShip
 	{
 		public InvaderShipCrab(Point location, Size range) : base(location, new Size(10, 5), range)
 		{
 			timer.Reset(750);
-			Show.Load(@"invaders\resources\alien_crab.txt", Size);
+			Show.Load(@"invaders\resources\alien_crab.txt", Size, ConsoleColor.Cyan);
 		}
 	}
 
@@ -214,7 +225,7 @@ namespace Game.Invaders
 		public InvaderShipOctopus(Point location, Size range) : base(location, new Size(8, 4), range)
 		{
 			timer.Reset(250);
-			Show.Load(@"invaders\resources\alien_octopus.txt", Size);
+			Show.Load(@"invaders\resources\alien_octopus.txt", Size, ConsoleColor.Magenta);
 		}
 	}
 
@@ -225,7 +236,7 @@ namespace Game.Invaders
 		public InvaderShipUFO(Point location, Size range) : base(location, new Size(16, 3), range)
 		{
 			timer.Reset(50);
-			Show.Load(@"invaders\resources\alien_ufo.txt", Size);
+			Show.Load(@"invaders\resources\alien_ufo.txt", Size, ConsoleColor.Yellow);
 		}
 	}
 

@@ -4,6 +4,7 @@
 ## TODO
 
 * game menu
+* help screen
 - game over
 - game finished
 - high score table

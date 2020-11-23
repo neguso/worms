@@ -13,8 +13,8 @@ namespace Game.Invaders
 			PostMessage(new WorldMessage { Name = MessageName.ShowIntro });
 		}
 
-		public GameLevel Level { get; protected set; }
 
+		public WorldLevel Level { get; protected set; }
 
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
@@ -29,15 +29,16 @@ namespace Game.Invaders
 			{
 				case MessageName.ShowIntro: LoadLevel(new IntroLevel(this)); break;
 				case MessageName.ShowMenu: LoadLevel(new MenuLevel(this)); break;
-				case MessageName.StartGame: LoadLevel(new InvadersGameLevel(this, 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\level1"))); break;
+				case MessageName.StartGame: LoadLevel(new InvadersGameLevel(this, 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\levels"))); break;
 				case MessageName.ShowHelp: LoadLevel(new HelpLevel(this)); break;
-				//case MessageName.NextLevel: NextGameLevel(); break;
-				//case MessageName.GameOver: LoadLevel(new LostLevel(this)); break;
+				case MessageName.NextLevel: NextGameLevel(); break;
+				case MessageName.GameOver: LoadLevel(new LostLevel(this)); break;
+				case MessageName.GameCompleted: LoadLevel(new WinLevel(this)); break;
 				case MessageName.Quit: Quit(); break;
 			}
 		}
 
-		protected void LoadLevel(GameLevel level)
+		protected void LoadLevel(WorldLevel level)
 		{
 			if(Level != null)
 				Level.Uninstall();
@@ -73,7 +74,7 @@ namespace Game.Invaders
 
 
 
-	public class IntroLevel : GameLevel
+	public class IntroLevel : WorldLevel
 	{
 		public IntroLevel(GameWorld world) : base(world)
 		{ }
@@ -86,7 +87,6 @@ namespace Game.Invaders
 				if(brick.Char == '#')
 					brick.ForeColor = ConsoleColor.Green;
 			});
-			
 			//
 			World.Elements.Add(logo);
 
@@ -109,7 +109,7 @@ namespace Game.Invaders
 
 
 
-	public class MenuLevel : GameLevel
+	public class MenuLevel : WorldLevel
 	{
 		public MenuLevel(InvadersWorld world) : base(world)
 		{ }
@@ -156,6 +156,8 @@ namespace Game.Invaders
 
 			if(host.Action == InvadersHost.MenuAction.Quit)
 				World.PostMessage(new WorldMessage { Name = MessageName.Quit });
+			else if(host.Action == InvadersHost.MenuAction.Help)
+				World.PostMessage(new WorldMessage { Name = MessageName.ShowHelp });
 			else if(host.Action == InvadersHost.MenuAction.NewGame1)
 				World.PostMessage(new NewGameMessage { Name = MessageName.StartGame, Players = 1 });
 			else if(host.Action == InvadersHost.MenuAction.NewGame2)
@@ -165,7 +167,46 @@ namespace Game.Invaders
 
 
 
-	public class InvadersGameLevel : GameLevel
+	public class HelpLevel : WorldLevel
+	{
+		public HelpLevel(InvadersWorld world) : base(world)
+		{ }
+
+
+		public override void Install()
+		{
+			var ufo = new InvaderShipUFO(new Point(30, 11), World.Size);
+			World.Elements.Add(ufo);
+			World.Elements.Add(new StaticText(".......... 100 POINTS", new Point(47, 12)));
+
+			var squid = new InvaderShipSquid(new Point(34, 15), World.Size);
+			World.Elements.Add(squid);
+			World.Elements.Add(new StaticText("..........  30 POINTS", new Point(47, 17)));
+
+			var crab = new InvaderShipCrab(new Point(36, 20), World.Size);
+			World.Elements.Add(crab);
+			World.Elements.Add(new StaticText("..........  20 POINTS", new Point(47, 22)));
+
+			var octopus = new InvaderShipOctopus(new Point(38, 25), World.Size);
+			World.Elements.Add(octopus);
+			World.Elements.Add(new StaticText("..........  10 POINTS", new Point(47, 27)));
+		}
+
+		public override void Uninstall()
+		{
+			World.Elements.Clear();
+		}
+
+		public override void Tick(IEnumerable<ConsoleKey> keys)
+		{
+			if(keys.Count() > 0)
+				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
+		}
+	}
+
+
+
+	public class InvadersGameLevel : WorldLevel
 	{
 		protected LevelConfig Config;
 
@@ -216,12 +257,19 @@ namespace Game.Invaders
 
 			// create invaders ships
 			invaders = new List<InvaderShip>();
-			for(int row = 0; row < 2; row++)
+			//
+			for(int row = 0; row < 1; row++)
 				for(int col = 0; col < 5; col++)
-					invaders.Add(new InvaderShipCrab(new Point(col * 13, 3 + row * 5), Arena.Size));
+					invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
+			//
+			for(int row = 1; row < 2; row++)
+				for(int col = 0; col < 6; col++)
+					invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
+			//
 			for(int row = 2; row < 4; row++)
-				for(int col = 0; col < 5; col++)
-					invaders.Add(new InvaderShipOctopus(new Point(col * 13 + 1, 3 + row * 5 + 1), Arena.Size));
+				for(int col = 0; col < 7; col++)
+					invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
+			//
 			invaders.Add(new InvaderShipUFO(new Point(0, 0), Arena.Size));
 			World.Elements.AddRange(invaders);
 
@@ -301,7 +349,9 @@ namespace Game.Invaders
 		}
 
 
-
+		/// <summary>
+		/// Control movement of the invaders fleet.
+		/// </summary>
 		public class InvadersController
 		{
 			public List<InvaderShip> Invaders { get; private set; }
@@ -313,6 +363,7 @@ namespace Game.Invaders
 			public InvadersController(List<InvaderShip> invaders, Size range)
 			{
 				Invaders = invaders;
+				Direction = MovingDirection.Right;
 				Range = range;
 				UpdateTimer = new Timer(750);
 			}
@@ -385,26 +436,12 @@ namespace Game.Invaders
 	}
 
 
-
-	public class HelpLevel : GameLevel
-	{
-		public HelpLevel(InvadersWorld world) : base(world)
-		{
-
-		}
-
-
-
-	}
-
-
-
-	public class LostLevel : GameLevel
+	
+	public class LostLevel : WorldLevel
 	{
 		public LostLevel(GameWorld world) : base(world)
-		{
-			Name = "lost";
-		}
+		{ Name = "lost"; }
+
 
 		public override void Install()
 		{
@@ -428,12 +465,11 @@ namespace Game.Invaders
 
 
 
-	public class WinLevel : GameLevel
+	public class WinLevel : WorldLevel
 	{
 		public WinLevel(GameWorld world) : base(world)
-		{
-			Name = "win";
-		}
+		{ Name = "win"; }
+
 
 		public override void Install()
 		{
