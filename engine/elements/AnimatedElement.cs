@@ -26,7 +26,7 @@ namespace Game
 
 		protected override void UpdateCore()
 		{
-			if(timer.Passed)
+			if(Invalidated || timer.Passed)
 			{
 				Show.Next();
 				Show.Draw(this, Point.Empty);

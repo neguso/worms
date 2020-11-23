@@ -125,10 +125,8 @@ namespace Game.Invaders
 			ZIndex = 1; // draw invaders on top of bariers
 			bombs = new List<Bomb>();
 			explodingTimer = new Timer(UpdateTimer.Interval);
-
 			Range = range;
 			Status = ShipStatus.Normal;
-			UpdateTimer.Reset(100);
 		}
 
 
@@ -148,7 +146,7 @@ namespace Game.Invaders
 			if(range > 0)
 			{
 				Random rnd = new Random();
-				bombs.Add(new Bomb(new Point(Location.X + rnd.Next(Size.Width + 1), Location.Y + 5), Range.Height - Location.Y - Size.Height));
+				bombs.Add(new Bomb(new Point(Location.X + rnd.Next(Size.Width + 1), Location.Y + Size.Height), range));
 			}
 		}
 

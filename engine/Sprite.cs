@@ -76,20 +76,30 @@ namespace Game
 	{
 		protected Queue<Command> Commands { get; private set; }
 		
+		
 
 		public Element(Point location, Size size) : base(location, size)
 		{
 			Commands = new Queue<Command>();
-			Players = new List<Player>();
+			
 			InputProcess = InputProcessMode.KeyPress;
-
+			Invalidated = true;
+			Players = new List<Player>();
 			UpdateTimer = new Timer(100);
 		}
 
 
 		public string Id { get; set; }
+		
+		/// <summary>
+		/// Specify how element receive input.
+		/// </summary>
 		public InputProcessMode InputProcess { get; protected set; }
 
+		/// <summary>
+		/// If set to true, cause immediate update of the element.
+		/// </summary>
+		public bool Invalidated { get; set; }
 
 		/// <summary>
 		/// Players controlling this element.
@@ -107,8 +117,9 @@ namespace Game
 		/// </summary>
 		public virtual void Process(Command command)
 		{
-			if(Enabled)
-				Commands.Enqueue(command);
+			if(!Enabled) return;
+
+			Commands.Enqueue(command);
 		}
 
 		/// <summary>
@@ -118,9 +129,10 @@ namespace Game
 		{
 			if(!Enabled) return;
 
-			if(UpdateTimer.Passed)
+			if(Invalidated || UpdateTimer.Passed)
 			{
 				UpdateCore();
+				Invalidated = false;
 				UpdateTimer.Reset();
 			}
 		}

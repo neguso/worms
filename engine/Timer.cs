@@ -13,7 +13,7 @@ namespace Game
 		public Timer(int interval)
 		{
 			Interval = interval;
-			start = DateTime.Now.AddMilliseconds(-Interval);
+			start = DateTime.Now; //.AddMilliseconds(-Interval);
 		}
 
 
@@ -37,7 +37,7 @@ namespace Game
 		public void Reset(int interval)
 		{
 			Interval = interval;
-			start = DateTime.Now.AddMilliseconds(-Interval);
+			start = DateTime.Now;//.AddMilliseconds(-Interval);
 		}
 	}
 }

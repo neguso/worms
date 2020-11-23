@@ -170,6 +170,8 @@ namespace Game.Invaders
 
 		public override void Install()
 		{
+			World.Elements.Add(new StaticText("S P A C E   I N V A D E R S", new Point(35, 5)));
+
 			var ufo = new InvaderShipUFO(new Point(30, 11), World.Size);
 			World.Elements.Add(ufo);
 			World.Elements.Add(new StaticText(".......... 100 POINTS", new Point(47, 12)));
@@ -185,6 +187,8 @@ namespace Game.Invaders
 			var octopus = new InvaderShipOctopus(new Point(34, 25), World.Size);
 			World.Elements.Add(octopus);
 			World.Elements.Add(new StaticText("............... 10 POINTS", new Point(43, 27)));
+
+			World.Elements.Add(new StaticText("Press any key to return to menu.", new Point(35, 35)) { Foreground = ConsoleColor.Gray });
 		}
 
 		public override void Uninstall()

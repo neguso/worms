@@ -5,6 +5,8 @@
 
 * game menu
 * help screen
+* keyboard behavior
+
 - game over
 - game finished
 - high score table
@@ -14,7 +16,6 @@
 - better invaders firing logic
 - create second level
 - define other levels
-- keyboard behavior
 
 
 ## IDEAS
