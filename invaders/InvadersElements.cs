@@ -146,7 +146,7 @@ namespace Game.Invaders
 			if(range > 0)
 			{
 				Random rnd = new Random();
-				bombs.Add(new Bomb(new Point(Location.X + rnd.Next(Size.Width + 1), Location.Y + Size.Height), range));
+				bombs.Add(new Bomb(new Point(Location.X + rnd.Next(Size.Width), Location.Y + Size.Height), range));
 			}
 		}
 
@@ -174,7 +174,7 @@ namespace Game.Invaders
 					if(rnd.Next(100) > 98) Fire();
 					break;
 				case ShipStatus.Alerted:
-					if(rnd.Next(100) > 95) Fire();
+					if(rnd.Next(100) > 90) Fire();
 					break;
 				case ShipStatus.Exploding:
 					if(explodingTimer.Count < 3)
@@ -232,10 +232,35 @@ namespace Game.Invaders
 
 	public class InvaderShipUFO : InvaderShip
 	{
+		private int speed;
+		private Timer movingTimer;
+
 		public InvaderShipUFO(Point location, Size range) : base(location, new Size(16, 3), range)
 		{
 			timer.Reset(50);
 			Show.Load(@"invaders\resources\alien_ufo.txt", Size, ConsoleColor.Yellow);
+
+			speed = 0;
+			movingTimer = new Timer(5000);
+			Status = ShipStatus.Alerted;
+		}
+
+
+		protected override void UpdateCore()
+		{
+			base.UpdateCore();
+
+			if(speed == 0 && movingTimer.Passed)
+				speed = Location.X < 0 ? 1 : -1;
+
+			Move(new Size(speed, 0));
+
+			if(speed != 0 && (Location.X <= -Size.Width || Location.X >= Range.Width))
+			{
+				speed = 0;
+				Random rnd = new Random();
+				movingTimer = new Timer(3000 + rnd.Next(10000));
+			}
 		}
 	}
 
@@ -281,6 +306,7 @@ namespace Game.Invaders
 							State = MissileState.OutOfRange;
 					}
 					break;
+
 				case MissileState.Exploding:
 					if(explosion.Length > 0)
 					{

@@ -6,10 +6,10 @@
 * game menu
 * help screen
 * keyboard behavior
-
+* high score table
+ 
 - game over
 - game finished
-- high score table
 - save score
 - big ship movement
 - big ship firing logic

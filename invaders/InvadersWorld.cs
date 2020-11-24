@@ -211,7 +211,6 @@ namespace Game.Invaders
 
 		protected Arena Arena;
 		protected DefenderShip defender;
-		protected List<InvaderShip> invaders;
 		protected InvadersController fleet;
 
 
@@ -255,22 +254,22 @@ namespace Game.Invaders
 				World.Elements.Add(new Barrier(new Point(9 + b * 23, 32)));
 
 			// create invaders ships
-			invaders = new List<InvaderShip>();
+			var invaders = new List<InvaderShip>();
 			//
 			for(int row = 0; row < 1; row++)
 				for(int col = 0; col < 5; col++)
 					invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
-			//
-			for(int row = 1; row < 2; row++)
-				for(int col = 0; col < 6; col++)
-					invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
-			//
-			for(int row = 2; row < 4; row++)
-				for(int col = 0; col < 7; col++)
-					invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
-			//
-			invaders.Add(new InvaderShipUFO(new Point(0, 0), Arena.Size));
+			////
+			//for(int row = 1; row < 2; row++)
+			//	for(int col = 0; col < 6; col++)
+			//		invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
+			////
+			//for(int row = 2; row < 4; row++)
+			//	for(int col = 0; col < 7; col++)
+			//		invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
 			World.Elements.AddRange(invaders);
+			//
+			World.Elements.Add(new InvaderShipUFO(new Point(-16, 0), Arena.Size));
 
 			// create invaders fleet controller
 			fleet = new InvadersController(invaders, Arena.Size);
@@ -317,7 +316,7 @@ namespace Game.Invaders
 				// with invaders
 				if(missile.GetType() == typeof(Missile))
 				{
-					foreach(var invader in invaders)
+					foreach(var invader in World.Elements.OfType<InvaderShip>())
 					{
 						var collisions = missile.Collisions(invader);
 						if(collisions.Count > 0)
@@ -342,9 +341,9 @@ namespace Game.Invaders
 			// coordinate invaders fleet
 			fleet.Move();
 
-			// launch missiles, bombs
+			// add missiles and bombs into world
 			World.Elements.AddRange(defender.GetMissiles());
-			invaders.ForEach(i => World.Elements.AddRange(i.GetMissiles()));
+			World.Elements.OfType<InvaderShip>().ToList().ForEach(i => World.Elements.AddRange(i.GetMissiles()));
 		}
 
 
@@ -370,6 +369,8 @@ namespace Game.Invaders
 
 			public void Move()
 			{
+				if(Invaders.Count == 0) return;
+
 				if(UpdateTimer.Passed)
 				{
 					// calculate moving distance and direction
