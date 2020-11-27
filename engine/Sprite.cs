@@ -53,9 +53,6 @@ namespace Game
 		{
 			public bool Equals(Point a, Point b)
 			{
-				if(ReferenceEquals(a, b)) return true;
-				if(a == null) return false;
-				if(b == null) return false;
 				if(a.GetType() != b.GetType()) return false;
 				return a.X == b.X && a.Y == b.Y;
 			}
