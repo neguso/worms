@@ -67,7 +67,7 @@ namespace Game.Invaders
 			return list;
 		}
 
-		public void Hit(Point location)
+		public virtual void Hit(Point location)
 		{
 			Status = ShipStatus.Exploding;
 			explodingTimer.Reset();
@@ -89,7 +89,7 @@ namespace Game.Invaders
 					break;
 
 				case ShipStatus.Exploding:
-					if(explodingTimer.Count < 10)
+					if(explodingTimer.Count < 7)
 					{
 						// alternate colors
 						Scan((brick, x, y) => { brick.ForeColor = explodingTimer.Count % 2 == 0 ? ConsoleColor.White : ConsoleColor.DarkGray ; });
@@ -132,6 +132,8 @@ namespace Game.Invaders
 
 		public ShipStatus Status { get; protected set; }
 		public Size Range { get; private set; }
+		public int Score { get; set; }
+		public bool IsDead => Status == ShipStatus.Exploding || Status == ShipStatus.Dead;
 
 
 		public void Move(Size distance)
@@ -157,7 +159,7 @@ namespace Game.Invaders
 			return list;
 		}
 
-		public void Hit(Point location)
+		public virtual void Hit(Point location)
 		{
 			Status = ShipStatus.Exploding;
 			explodingTimer.Reset();
@@ -201,6 +203,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipSquid(Point location, Size range) : base(location, new Size(12, 5), range)
 		{
+			Score = 50;
 			timer.Reset(1250);
 			Show.Load(@"invaders\resources\alien_squid.txt", Size, ConsoleColor.Green);
 		}
@@ -212,6 +215,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipCrab(Point location, Size range) : base(location, new Size(10, 5), range)
 		{
+			Score = 20;
 			timer.Reset(750);
 			Show.Load(@"invaders\resources\alien_crab.txt", Size, ConsoleColor.Cyan);
 		}
@@ -223,6 +227,7 @@ namespace Game.Invaders
 	{
 		public InvaderShipOctopus(Point location, Size range) : base(location, new Size(8, 4), range)
 		{
+			Score = 10;
 			timer.Reset(250);
 			Show.Load(@"invaders\resources\alien_octopus.txt", Size, ConsoleColor.Magenta);
 		}
@@ -232,14 +237,20 @@ namespace Game.Invaders
 
 	public class InvaderShipUFO : InvaderShip
 	{
+		private readonly bool moving;
 		private int speed;
 		private Timer movingTimer;
 
-		public InvaderShipUFO(Point location, Size range) : base(location, new Size(16, 3), range)
+
+		public InvaderShipUFO(Point location, Size range, bool moving = true) : base(location, new Size(16, 3), range)
 		{
-			timer.Reset(50);
+			UpdateTimer.Reset(75);
+
+			Score = 100;
+			timer.Reset(200);
 			Show.Load(@"invaders\resources\alien_ufo.txt", Size, ConsoleColor.Yellow);
 
+			this.moving = moving;
 			speed = 0;
 			movingTimer = new Timer(5000);
 			Status = ShipStatus.Alerted;
@@ -250,16 +261,21 @@ namespace Game.Invaders
 		{
 			base.UpdateCore();
 
-			if(speed == 0 && movingTimer.Passed)
-				speed = Location.X < 0 ? 1 : -1;
-
-			Move(new Size(speed, 0));
-
-			if(speed != 0 && (Location.X <= -Size.Width || Location.X >= Range.Width))
+			if(moving)
 			{
-				speed = 0;
-				Random rnd = new Random();
-				movingTimer = new Timer(3000 + rnd.Next(10000));
+				// start moving after some time
+				if(speed == 0 && movingTimer.Passed)
+					speed = Location.X < 0 ? 1 : -1;
+
+				Move(new Size(speed, 0));
+
+				// stop moving if outside range
+				if(speed != 0 && (Location.X <= -Size.Width || Location.X >= Range.Width))
+				{
+					speed = 0;
+					Random rnd = new Random();
+					movingTimer = new Timer(3000 + rnd.Next(10000));
+				}
 			}
 		}
 	}
@@ -268,7 +284,7 @@ namespace Game.Invaders
 
 	public class Projectile : Element
 	{
-		protected char[] explosion = new char[] { '∙', '☼' };
+		protected char[] explosion = new char[] { '∙', '☼', 'o' };
 
 		public int Direction { get; private set; }
 		public int Range { get; private set; }
@@ -371,6 +387,50 @@ namespace Game.Invaders
 				buffer[location.X, location.Y] = null;
 			else if(stage > 0)
 				brick.Char = stages[stage - 1];
+		}
+	}
+
+
+
+	public class ScoreBox : Element
+	{
+		protected Player player;
+
+
+		public ScoreBox(Player player, Point location, int width) : base(location, new Size(width, 1))
+		{
+			this.player = player;
+		}
+
+
+		protected override void UpdateCore()
+		{
+			Text(Point.Empty, player.Name, player.Color);
+			Text(new Point(player.Name.Length + 1, 0), ColorConsole.CharMap['►'] + " " + player.Score.ToString().PadLeft(4, '0'), player.Color);
+		}
+	}
+
+
+
+	public class LivesBox : Element
+	{
+		protected Player player;
+		protected Element ship;
+
+
+		public LivesBox(Player player, Point location) : base(location, new Size(24, 2))
+		{
+			this.player = player;
+			ship = new Element(Point.Empty, new Size(7, 2));
+			ship.Load(@"invaders\resources\defender1.txt", Point.Empty);
+		}
+
+
+		protected override void UpdateCore()
+		{
+			Clear();
+			for(int i = 0; i < player.Lives; i++)
+				Load(ship, new Point(i * 8, 0));
 		}
 	}
 }

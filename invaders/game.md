@@ -40,3 +40,21 @@
 
 
 ```
+
+
+intro
+menu -> player 1
+ready player 1
+game
+game over / finish
+menu
+
+intro
+menu player 2
+ready player 1
+game
+game over / finish
+ready player 2
+game
+game over / finish
+menu

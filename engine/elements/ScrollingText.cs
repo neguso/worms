@@ -19,7 +19,7 @@ namespace Game
 			Foreground = ConsoleColor.White;
 			Background = ConsoleColor.Black;
 			Step = 1;
-			UpdateTimer.Reset(50);
+			UpdateTimer.Reset(100);
 
 			queue = new Queue<char>(label.ToCharArray());
 			while(queue.Count < Size.Width)

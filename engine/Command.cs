@@ -17,29 +17,29 @@ namespace Game
 
 
 		// general commands
-		private static Command _escape = new Command("Escape");
+		private readonly static Command _escape = new Command("Escape");
 		public static Command Escape => _escape;
 
-		private static Command _enter = new Command("Enter");
+		private readonly static Command _enter = new Command("Enter");
 		public static Command Enter => _enter;
 
 		// player commands
-		private static Command _left = new Command("Left");
+		private readonly static Command _left = new Command("Left");
 		public static Command Left => _left;
 
-		private static Command _right = new Command("Right");
+		private readonly static Command _right = new Command("Right");
 		public static Command Right => _right;
 
-		private static Command _up = new Command("Up");
+		private readonly static Command _up = new Command("Up");
 		public static Command Up => _up;
 
-		private static Command _down = new Command("Down");
+		private readonly static Command _down = new Command("Down");
 		public static Command Down => _down;
 
-		private static Command _fire = new Command("Fire");
+		private readonly static Command _fire = new Command("Fire");
 		public static Command Fire => _fire;
 
-		private static Command _jump = new Command("Jump");
+		private readonly static Command _jump = new Command("Jump");
 		public static Command Jump => _jump;
 	}
 }

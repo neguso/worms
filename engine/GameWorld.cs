@@ -38,14 +38,6 @@ namespace Game
 			messages.Enqueue(message);
 		}
 
-		/// <summary>
-		/// Decode keys in player commands.
-		/// </summary>
-		public IEnumerable<Command> Decode(IEnumerable<ConsoleKey> keys, Player player)
-		{
-			return keys.Join(player.KeyMap, k => k, m => m.Key, (k, m) => m.Command);
-		}
-
 		public virtual void Tick(IEnumerable<ConsoleKey> keysPress, IEnumerable<ConsoleKey> keysDown)
 		{
 			// process world messages
@@ -53,12 +45,12 @@ namespace Game
 				ProcessMessage(messages.Dequeue());
 
 			// process keys press
-			if(keysPress.Count() > 0)
+			if(keysPress.Any())
 			{
 				Players.ForEach(player =>
 				{
 					// get player commands
-					var commands = Decode(keysPress, player);
+					var commands = player.Decode(keysPress);
 					foreach(var command in commands)
 					{
 						// send commands to player
@@ -72,12 +64,12 @@ namespace Game
 			}
 
 			// process keys down
-			if(keysDown.Count() > 0)
+			if(keysDown.Any())
 			{
 				Players.ForEach(player =>
 				{
 					// get player commands
-					var commands = Decode(keysDown, player);
+					var commands = player.Decode(keysDown);
 					foreach(var command in commands)
 					{
 						// send commands to player elements

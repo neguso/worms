@@ -12,7 +12,7 @@ namespace Game
 		public ConsoleColor BackColor;
 
 
-		public static Brick _empty = new Brick() { Char = Char.MinValue, ForeColor = ConsoleColor.White, BackColor = ConsoleColor.Black };
+		private static readonly Brick _empty = new Brick() { Char = Char.MinValue, ForeColor = ConsoleColor.White, BackColor = ConsoleColor.Black };
 		public static Brick Empty => _empty;
 
 		public static Brick From(char c, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black) => new Brick() { Char = c, ForeColor = foregroundColor, BackColor = backgroundColor };

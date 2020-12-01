@@ -71,7 +71,26 @@ namespace Game
 		public void Load(string file, Point location, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
 		{
 			var lines = File.ReadLines(file).Take(buffer.GetLength(1)).Select(l => l.Substring(0, Math.Min(buffer.GetLength(0), l.Length))).ToArray();
-			for(int y = 0; y < lines.Count(); y++)
+			for(int y = 0; y < lines.Length; y++)
+			{
+				var ary = lines[y].ToCharArray();
+				for(int x = 0; x < ary.Length; x++)
+				{
+					int xx = location.X + x, yy = location.Y + y;
+					if(xx >= 0 && xx < buffer.GetLength(0) && yy >= 0 && yy < buffer.GetLength(1))
+						buffer[xx, yy] = ary[x] == ' ' ? null : Brick.From(ColorConsole.CharMap[ary[x]], foreground, background);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Load stream content into current frame.
+		/// </summary>
+		public void Load(Stream stream, Point location, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
+		{
+			var reader = new StreamReader(stream);
+			var lines = reader.ReadToEnd().Split("\r\n").Take(buffer.GetLength(1)).Select(l => l.Substring(0, Math.Min(buffer.GetLength(0), l.Length))).ToArray();
+			for(int y = 0; y < lines.Length; y++)
 			{
 				var ary = lines[y].ToCharArray();
 				for(int x = 0; x < ary.Length; x++)

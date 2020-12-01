@@ -14,6 +14,15 @@ namespace Game
 		public int Score;
 		public KeyboardKeyMap[] KeyMap;
 
+
+		/// <summary>
+		/// Decode keys in player commands.
+		/// </summary>
+		public IEnumerable<Command> Decode(IEnumerable<ConsoleKey> keys)
+		{
+			return keys.Join(KeyMap, k => k, m => m.Key, (k, m) => m.Command);
+		}
+
 		public virtual void Process(Command command) { }
 	}
 }

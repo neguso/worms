@@ -7,19 +7,20 @@
 * help screen
 * keyboard behavior
 * high score table
- 
-- game over
-- game finished
-- save score
-- big ship movement
-- big ship firing logic
-- better invaders firing logic
-- create second level
-- define other levels
+* keep score
+* 3 lives
+* game over
+* game finished
+* save score
 
 
 ## IDEAS
 
-- todo
-
+- create second level
+- define third levels
+- better big ship movement
+- better big ship firing logic
+- better invaders firing logic
+- embed resources
+- ask player name if in top 10
 

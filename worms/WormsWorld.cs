@@ -108,7 +108,7 @@ namespace Game.Worms
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keys.Count() > 0)
+			if(keys.Any())
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
@@ -297,7 +297,7 @@ namespace Game.Worms
 				// if worm colide with other worms
 				//TODO:
 			}
-			if(Worms.Count(w => w.Enabled) == 0)
+			if(!Worms.Any(w => w.Enabled))
 				World.PostMessage(new WorldMessage { Name = MessageName.GameOver });
 
 			if(keys.Any(k => k == ConsoleKey.Escape))
@@ -385,9 +385,7 @@ namespace Game.Worms
 	public class LostLevel : WorldLevel
 	{
 		public LostLevel(GameWorld world) : base(world)
-		{
-			Name = "lost";
-		}
+		{ }
 
 		public override void Install()
 		{
@@ -404,7 +402,7 @@ namespace Game.Worms
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keys.Count() > 0)
+			if(keys.Any())
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}
@@ -413,9 +411,7 @@ namespace Game.Worms
 	public class WinLevel : WorldLevel
 	{
 		public WinLevel(GameWorld world) : base(world)
-		{
-			Name = "win";
-		}
+		{ }
 
 		public override void Install()
 		{
@@ -432,7 +428,7 @@ namespace Game.Worms
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(keys.Count() > 0)
+			if(keys.Any())
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
 	}

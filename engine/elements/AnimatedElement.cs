@@ -61,7 +61,7 @@ namespace Game
 			var lines = File.ReadLines(file).Select(l => l.Substring(0, Math.Min(size.Width, l.Length))).ToArray();
 
 			var slide = new Brick[0,0];
-			for(int y = 0; y < lines.Count(); y++)
+			for(int y = 0; y < lines.Length; y++)
 			{
 				if(y % size.Height == 0)
 				{

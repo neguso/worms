@@ -19,6 +19,9 @@ namespace Game
 		}
 
 
+		public Score First => Scores[0];
+		public Score Last => Scores[^1];
+
 		public void Init()
 		{
 			for(int i = 0; i < Scores.Length; i++)
