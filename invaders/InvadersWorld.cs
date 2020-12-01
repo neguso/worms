@@ -21,6 +21,7 @@ namespace Game.Invaders
 		public int TotalPlayers { get; private set; }
 		public int CurrentPlayer { get; private set; }
 		public WorldLevel Level { get; protected set; }
+		public int CurrentLevel { get; protected set; }
 
 
 		public override void Tick(IEnumerable<ConsoleKey> keysPress, IEnumerable<ConsoleKey> keysDown)
@@ -39,7 +40,8 @@ namespace Game.Invaders
 				case MessageName.ReadyGame:
 					TotalPlayers = ((ReadyGameMessage)message).Players;
 					CurrentPlayer = 1;
-					LoadLevel(new ReadyLevel(this, CurrentPlayer));
+					CurrentLevel = 1;
+					LoadLevel(new ReadyLevel(this, CurrentPlayer, CurrentLevel));
 					break;
 				
 				case MessageName.StartGame:
@@ -47,7 +49,16 @@ namespace Game.Invaders
 					break;
 				
 				case MessageName.ShowHelp: LoadLevel(new HelpLevel(this)); break;
-				//case MessageName.NextLevel: NextGameLevel(); break;
+				
+				case MessageName.NextLevel:
+					if(Level != null)
+					{
+						if(Level.Index < 3)
+							LoadLevel(new GameLevel(this, Level.Index + 1, new GameLevel.LevelConfig(@"invaders\resources\levels")));
+						else
+							LoadLevel(new WinLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
+					}
+					break;
 				
 				case MessageName.NextPlayer:
 					if(CurrentPlayer < TotalPlayers)
@@ -60,13 +71,13 @@ namespace Game.Invaders
 					break;
 
 				case MessageName.GameOver:
-					HighScores.Record(((GameFinished)message).Player, ((GameFinished)message).Score);
-					LoadLevel(new LostLevel(this, CurrentPlayer, ((GameFinished)message).Score));
+					HighScores.Record(((LevelFinished)message).Player, ((LevelFinished)message).Score);
+					LoadLevel(new LostLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
 					break;
 				
 				case MessageName.GameCompleted:
-					HighScores.Record(((GameFinished)message).Player, ((GameFinished)message).Score);
-					LoadLevel(new WinLevel(this, CurrentPlayer, ((GameFinished)message).Score));
+					HighScores.Record(((LevelFinished)message).Player, ((LevelFinished)message).Score);
+					LoadLevel(new WinLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
 					break;
 				
 				case MessageName.Quit: Quit(); break;
@@ -83,11 +94,11 @@ namespace Game.Invaders
 
 		//protected void NextGameLevel()
 		//{
-		//	var level = Level as InvadersGameLevel;
+		//	var level = Level as GameLevel;
 		//	if(level != null)
 		//	{
 		//		if(level.Index < 3)
-		//			LoadLevel(new InvadersGameLevel(this, level.Index + 1, new InvadersGameLevel.LevelConfig(@"invaders\resources\levels")));
+		//			LoadLevel(new GameLevel(this, level.Index + 1, new GameLevel.LevelConfig(@"invaders\resources\levels")));
 		//		else
 		//			LoadLevel(new WinLevel(this, CurrentPlayer));
 		//	}
@@ -245,28 +256,22 @@ namespace Game.Invaders
 	public class ReadyLevel : WorldLevel
 	{
 		protected int player;
+		protected int level;
 		protected Timer textTimer;
 
 
-		public ReadyLevel(GameWorld world, int player) : base(world)
+		public ReadyLevel(GameWorld world, int player, int level) : base(world)
 		{
 			this.player = player;
+			this.level = level;
 			textTimer = new Timer(200);
-		}
-
-
-		private void AnimateText(StaticText text)
-		{
-			if(text.Foreground == ConsoleColor.White)
-				text.Foreground = ConsoleColor.DarkGray;
-			else
-				text.Foreground = ConsoleColor.White;
 		}
 
 
 		public override void Install()
 		{
 			World.Elements.Add(new StaticText($"R E A D Y  P L A Y E R  {player}", new Point(38, 17)));
+			World.Elements.Add(new StaticText($"LEVEL {level}", new Point(47, 19)));
 			World.Elements.Add(new StaticText("press any key to start", new Point(39, 32)));
 		}
 
@@ -282,7 +287,12 @@ namespace Game.Invaders
 
 			if(textTimer.Passed)
 			{
-				AnimateText(World.Elements[0] as StaticText);
+				var text = World.Elements[0] as StaticText;
+				if(text.Foreground == ConsoleColor.White)
+					text.Foreground = ConsoleColor.DarkGray;
+				else
+					text.Foreground = ConsoleColor.White;
+
 				textTimer.Reset();
 			}
 		}
@@ -357,7 +367,7 @@ namespace Game.Invaders
 			World.Elements.Add(new InvaderShipUFO(new Point(-16, 0), Arena.Size));
 
 			// create invaders fleet controller
-			fleet = new InvadersController(invaders, Arena.Size);
+			fleet = new InvadersController(invaders, 800 - Index * 250, Arena.Size);
 
 			// lives
 			World.Elements.Add(new LivesBox(player, new Point(2, World.Size.Height - 2)));
@@ -401,7 +411,7 @@ namespace Game.Invaders
 							if(defender.Player.Lives > 0)
 								defender.Hit(collisions[0]);
 							else
-								World.PostMessage(new GameFinished { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
+								World.PostMessage(new LevelFinished { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
 						}
 					}
 				}
@@ -422,8 +432,21 @@ namespace Game.Invaders
 				}
 			}
 
-			// check defender collisons
-			//TODO
+			// check invader collisons
+			foreach(var invader in World.Elements.OfType<InvaderShip>())
+			{
+				// with defender
+				var collisions = invader.Collisions(defender);
+				if(collisions.Count > 0)
+				{
+					defender.Player.Lives--;
+					if(defender.Player.Lives > 0)
+						defender.Hit(collisions[0]);
+					else
+						World.PostMessage(new LevelFinished { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
+				}
+			}
+
 
 			// remove out of range missiles
 			World.Elements.RemoveAll(e => e is Projectile m && m.State == Projectile.MissileState.OutOfRange);
@@ -432,7 +455,7 @@ namespace Game.Invaders
 			World.Elements.RemoveAll(e => e is InvaderShip i && i.Status == InvaderShip.ShipStatus.Dead);
 			fleet.Invaders.RemoveAll(i => i.Status == InvaderShip.ShipStatus.Dead);
 			if(!World.Elements.Any(e => e is InvaderShip))
-				World.PostMessage(new GameFinished { Name = MessageName.GameCompleted, Player = World.Players[0].Name, Score = World.Players[0].Score });
+				World.PostMessage(new LevelFinished { Name = MessageName.GameCompleted, Player = World.Players[0].Name, Score = World.Players[0].Score });
 
 			// coordinate invaders fleet
 			fleet.Move();
@@ -441,6 +464,7 @@ namespace Game.Invaders
 			World.Elements.AddRange(defender.GetMissiles());
 			World.Elements.OfType<InvaderShip>().ToList().ForEach(i => World.Elements.AddRange(i.GetMissiles()));
 
+			// check for escape
 			if(keys.Any(k => k == ConsoleKey.Escape))
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowMenu });
 		}
@@ -457,12 +481,12 @@ namespace Game.Invaders
 			public Size Range;
 
 
-			public InvadersController(List<InvaderShip> invaders, Size range)
+			public InvadersController(List<InvaderShip> invaders, int moveDelay, Size range)
 			{
 				Invaders = invaders;
 				Direction = MovingDirection.Right;
 				Range = range;
-				UpdateTimer = new Timer(750);
+				UpdateTimer = new Timer(moveDelay);
 			}
 
 
@@ -607,7 +631,7 @@ namespace Game.Invaders
 
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
-			if(timer.Passed &&    keys.Any())
+			if(timer.Passed && keys.Any())
 				World.PostMessage(new WorldMessage { Name = MessageName.NextPlayer });
 		}
 	}
@@ -633,7 +657,7 @@ namespace Game.Invaders
 		public int Players;
 	}
 
-	public class GameFinished : WorldMessage
+	public class LevelFinished : WorldMessage
 	{
 		public string Player;
 		public int Score;

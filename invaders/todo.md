@@ -16,9 +16,7 @@
 
 ## IDEAS
 
-- create second level
-- define third levels
-- better big ship movement
+- create 3 levels with increasing invaders speed
 - better big ship firing logic
 - better invaders firing logic
 - embed resources
