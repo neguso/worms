@@ -10,6 +10,7 @@ namespace Game.Invaders
 	{
 		private const string hiscores = "invaders.xml";
 
+
 		public InvadersWorld(Size size) : base(size)
 		{
 			LoadScores(hiscores);
@@ -36,51 +37,42 @@ namespace Game.Invaders
 			{
 				case MessageName.ShowIntro: LoadLevel(new IntroLevel(this)); break;
 				case MessageName.ShowMenu: LoadLevel(new MenuLevel(this)); break;
-				
-				case MessageName.ReadyGame:
-					TotalPlayers = ((ReadyGameMessage)message).Players;
-					CurrentPlayer = 1;
-					CurrentLevel = 1;
-					LoadLevel(new ReadyLevel(this, CurrentPlayer, CurrentLevel));
+				case MessageName.ShowHelp: LoadLevel(new HelpLevel(this)); break;
+				case MessageName.Quit: Quit(); break;
+
+				case MessageName.ShowReady:
+					TotalPlayers = ((PlayerReadyMessage)message).Players;
+					LoadLevel(new ReadyLevel(this, CurrentPlayer = 1, CurrentLevel = 1));
 					break;
 				
 				case MessageName.StartGame:
-					LoadLevel(new GameLevel(this, 1, new GameLevel.LevelConfig(@"invaders\resources\levels")));
+					LoadLevel(new GameLevel(this, CurrentLevel, new GameLevel.LevelConfig(@"invaders\resources\levels")));
 					break;
 				
-				case MessageName.ShowHelp: LoadLevel(new HelpLevel(this)); break;
-				
 				case MessageName.NextLevel:
-					if(Level != null)
-					{
-						if(Level.Index < 3)
-							LoadLevel(new GameLevel(this, Level.Index + 1, new GameLevel.LevelConfig(@"invaders\resources\levels")));
-						else
-							LoadLevel(new WinLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
-					}
+					if(CurrentLevel < 3)
+						LoadLevel(new ReadyLevel(this, CurrentPlayer, ++CurrentLevel));
+					else
+						LoadLevel(new WinGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
 				case MessageName.NextPlayer:
 					if(CurrentPlayer < TotalPlayers)
-					{
-						CurrentPlayer++;
-						LoadLevel(new ReadyLevel(this, CurrentPlayer));
-					}
+						LoadLevel(new ReadyLevel(this, ++CurrentPlayer, CurrentLevel = 1));
 					else
 						LoadLevel(new MenuLevel(this));
 					break;
 
 				case MessageName.GameOver:
-					HighScores.Record(((LevelFinished)message).Player, ((LevelFinished)message).Score);
-					LoadLevel(new LostLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
+					HighScores.Record(((GameFinishedMessage)message).Player, ((GameFinishedMessage)message).Score);
+					LoadLevel(new LostGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
 				case MessageName.GameCompleted:
-					HighScores.Record(((LevelFinished)message).Player, ((LevelFinished)message).Score);
-					LoadLevel(new WinLevel(this, CurrentPlayer, ((LevelFinished)message).Score));
+					HighScores.Record(((GameFinishedMessage)message).Player, ((GameFinishedMessage)message).Score);
+					LoadLevel(new WinGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
-				case MessageName.Quit: Quit(); break;
 			}
 		}
 
@@ -91,18 +83,6 @@ namespace Game.Invaders
 			Level = level;
 			Level.Install();
 		}
-
-		//protected void NextGameLevel()
-		//{
-		//	var level = Level as GameLevel;
-		//	if(level != null)
-		//	{
-		//		if(level.Index < 3)
-		//			LoadLevel(new GameLevel(this, level.Index + 1, new GameLevel.LevelConfig(@"invaders\resources\levels")));
-		//		else
-		//			LoadLevel(new WinLevel(this, CurrentPlayer));
-		//	}
-		//}
 
 		protected void Quit()
 		{
@@ -202,9 +182,9 @@ namespace Game.Invaders
 			else if(host.Action == InvadersHost.MenuAction.Help)
 				World.PostMessage(new WorldMessage { Name = MessageName.ShowHelp });
 			else if(host.Action == InvadersHost.MenuAction.NewGame1)
-				World.PostMessage(new ReadyGameMessage { Name = MessageName.ReadyGame, Players = 1 });
+				World.PostMessage(new PlayerReadyMessage { Name = MessageName.ShowReady, Players = 1 });
 			else if(host.Action == InvadersHost.MenuAction.NewGame2)
-				World.PostMessage(new ReadyGameMessage { Name = MessageName.ReadyGame, Players = 2 });
+				World.PostMessage(new PlayerReadyMessage { Name = MessageName.ShowReady, Players = 2 });
 		}
 	}
 
@@ -257,14 +237,14 @@ namespace Game.Invaders
 	{
 		protected int player;
 		protected int level;
-		protected Timer textTimer;
+		protected Timer animationTimer;
 
 
 		public ReadyLevel(GameWorld world, int player, int level) : base(world)
 		{
 			this.player = player;
 			this.level = level;
-			textTimer = new Timer(200);
+			animationTimer = new Timer(200);
 		}
 
 
@@ -285,7 +265,7 @@ namespace Game.Invaders
 			if(keys.Any())
 				World.PostMessage(new WorldMessage { Name = MessageName.StartGame });
 
-			if(textTimer.Passed)
+			if(animationTimer.Passed)
 			{
 				var text = World.Elements[0] as StaticText;
 				if(text.Foreground == ConsoleColor.White)
@@ -293,7 +273,7 @@ namespace Game.Invaders
 				else
 					text.Foreground = ConsoleColor.White;
 
-				textTimer.Reset();
+				animationTimer.Reset();
 			}
 		}
 	}
@@ -351,17 +331,17 @@ namespace Game.Invaders
 			// create invaders ships
 			var invaders = new List<InvaderShip>();
 			//
-			for(int row = 0; row < 1; row++)
-				for(int col = 0; col < 5; col++)
-					invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
-			//
-			for(int row = 1; row < 2; row++)
-				for(int col = 0; col < 6; col++)
-					invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
-			//
-			for(int row = 2; row < 4; row++)
-				for(int col = 0; col < 7; col++)
-					invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
+			//for(int row = 0; row < 1; row++)
+			//	for(int col = 0; col < 5; col++)
+			//		invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
+			////
+			//for(int row = 1; row < 2; row++)
+			//	for(int col = 0; col < 6; col++)
+			//		invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
+			////
+			//for(int row = 2; row < 4; row++)
+			//	for(int col = 0; col < 7; col++)
+			//		invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
 			World.Elements.AddRange(invaders);
 			//
 			World.Elements.Add(new InvaderShipUFO(new Point(-16, 0), Arena.Size));
@@ -374,6 +354,9 @@ namespace Game.Invaders
 
 			// score
 			World.Elements.Add(new ScoreBox(player, new Point(83, World.Size.Height - 2), 20));
+
+			// level
+			World.Elements.Add(new LevelBox(Index, new Point(47, World.Size.Height - 2), 20));
 		}
 
 		public override void Uninstall()
@@ -411,7 +394,7 @@ namespace Game.Invaders
 							if(defender.Player.Lives > 0)
 								defender.Hit(collisions[0]);
 							else
-								World.PostMessage(new LevelFinished { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
+								World.PostMessage(new GameFinishedMessage { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
 						}
 					}
 				}
@@ -443,7 +426,7 @@ namespace Game.Invaders
 					if(defender.Player.Lives > 0)
 						defender.Hit(collisions[0]);
 					else
-						World.PostMessage(new LevelFinished { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
+						World.PostMessage(new GameFinishedMessage { Name = MessageName.GameOver, Player = World.Players[0].Name, Score = World.Players[0].Score });
 				}
 			}
 
@@ -455,7 +438,7 @@ namespace Game.Invaders
 			World.Elements.RemoveAll(e => e is InvaderShip i && i.Status == InvaderShip.ShipStatus.Dead);
 			fleet.Invaders.RemoveAll(i => i.Status == InvaderShip.ShipStatus.Dead);
 			if(!World.Elements.Any(e => e is InvaderShip))
-				World.PostMessage(new LevelFinished { Name = MessageName.GameCompleted, Player = World.Players[0].Name, Score = World.Players[0].Score });
+				World.PostMessage(new GameFinishedMessage { Name = MessageName.NextLevel, Player = World.Players[0].Name, Score = World.Players[0].Score });
 
 			// coordinate invaders fleet
 			fleet.Move();
@@ -560,14 +543,14 @@ namespace Game.Invaders
 
 
 	
-	public class LostLevel : WorldLevel
+	public class LostGameLevel : WorldLevel
 	{
 		protected int player;
 		protected int score;
 		protected Timer timer;
 
 
-		public LostLevel(GameWorld world, int player, int score) : base(world)
+		public LostGameLevel(GameWorld world, int player, int score) : base(world)
 		{
 			this.player = player;
 			this.score = score;
@@ -599,14 +582,14 @@ namespace Game.Invaders
 
 
 
-	public class WinLevel : WorldLevel
+	public class WinGameLevel : WorldLevel
 	{
 		protected int player;
 		protected int score;
 		protected Timer timer;
 
 
-		public WinLevel(GameWorld world, int player, int score) : base(world)
+		public WinGameLevel(GameWorld world, int player, int score) : base(world)
 		{
 			this.player = player;
 			this.score = score;
@@ -642,22 +625,24 @@ namespace Game.Invaders
 	{
 		public const string ShowIntro = "show_intro";
 		public const string ShowMenu = "show_menu";
-		public const string ReadyGame = "ready_game";
-		public const string StartGame = "start_game";
 		public const string ShowHelp = "show_help";
 		public const string Quit = "quit";
+		public const string ShowReady = "show_ready";
+		public const string StartGame = "start_game";
 		public const string NextLevel = "next_level";
 		public const string NextPlayer = "next_player";
 		public const string GameOver = "game_over";
 		public const string GameCompleted = "game_completed";
 	}
 
-	public class ReadyGameMessage : WorldMessage
+	public class PlayerReadyMessage : WorldMessage
 	{
 		public int Players;
+
+		public PlayerReadyMessage() { Name = MessageName.ShowReady; }
 	}
 
-	public class LevelFinished : WorldMessage
+	public class GameFinishedMessage : WorldMessage
 	{
 		public string Player;
 		public int Score;

@@ -33,7 +33,7 @@ namespace Game.Invaders
 			missiles = new List<Missile>();
 			Load(@"invaders\resources\defender1.txt", Point.Empty);
 			UpdateTimer.Reset(50);
-			fireTimer = new Timer(300);
+			fireTimer = new Timer(500);
 			explodingTimer = new Timer(200);
 		}
 
@@ -407,6 +407,25 @@ namespace Game.Invaders
 		{
 			Text(Point.Empty, player.Name, player.Color);
 			Text(new Point(player.Name.Length + 1, 0), ColorConsole.CharMap['►'] + " " + player.Score.ToString().PadLeft(4, '0'), player.Color);
+		}
+	}
+
+
+
+	public class LevelBox : Element
+	{
+		protected int level;
+
+
+		public LevelBox(int level, Point location, int width) : base(location, new Size(width, 1))
+		{
+			this.level = level;
+		}
+
+
+		protected override void UpdateCore()
+		{
+			Text(Point.Empty, $"LEVEL {level}");
 		}
 	}
 
