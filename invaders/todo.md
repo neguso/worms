@@ -11,7 +11,7 @@
 * 3 lives
 * game over
 * game finished
-* save score
+- save score
 
 
 ## IDEAS

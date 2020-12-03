@@ -53,7 +53,7 @@ namespace Game.Invaders
 					if(CurrentLevel < 3)
 						LoadLevel(new ReadyLevel(this, CurrentPlayer, ++CurrentLevel));
 					else
-						LoadLevel(new WinGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
+						LoadLevel(new WinLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
 				case MessageName.NextPlayer:
@@ -65,12 +65,12 @@ namespace Game.Invaders
 
 				case MessageName.GameOver:
 					HighScores.Record(((GameFinishedMessage)message).Player, ((GameFinishedMessage)message).Score);
-					LoadLevel(new LostGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
+					LoadLevel(new LostLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
 				case MessageName.GameCompleted:
 					HighScores.Record(((GameFinishedMessage)message).Player, ((GameFinishedMessage)message).Score);
-					LoadLevel(new WinGameLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
+					LoadLevel(new WinLevel(this, CurrentPlayer, ((GameFinishedMessage)message).Score));
 					break;
 				
 			}
@@ -543,14 +543,14 @@ namespace Game.Invaders
 
 
 	
-	public class LostGameLevel : WorldLevel
+	public class LostLevel : WorldLevel
 	{
 		protected int player;
 		protected int score;
 		protected Timer timer;
 
 
-		public LostGameLevel(GameWorld world, int player, int score) : base(world)
+		public LostLevel(GameWorld world, int player, int score) : base(world)
 		{
 			this.player = player;
 			this.score = score;
@@ -582,14 +582,14 @@ namespace Game.Invaders
 
 
 
-	public class WinGameLevel : WorldLevel
+	public class WinLevel : WorldLevel
 	{
 		protected int player;
 		protected int score;
 		protected Timer timer;
 
 
-		public WinGameLevel(GameWorld world, int player, int score) : base(world)
+		public WinLevel(GameWorld world, int player, int score) : base(world)
 		{
 			this.player = player;
 			this.score = score;
