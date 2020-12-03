@@ -12,30 +12,22 @@ namespace Game
 	{
 		private DateTime lastRefresh = DateTime.MinValue;
 
-		public bool WaitForRefresh = true;
 
-
-		public Screen()
+		private Screen()
 		{
 			Console.CursorVisible = false;
 		}
 
 
-		public Size Size
-		{
-			get { return ColorConsole.Size; }
-		}
+		public Size Size => ColorConsole.Size;
 
 
-		public void WaitRefresh(double duration = 16.66667) // 60Hz
+		public void WaitRefresh(double interval = 16.66667) // 60Hz
 		{
-			if(WaitForRefresh)
-			{
-				double elapsed = (DateTime.Now - lastRefresh).TotalMilliseconds;
-				if(elapsed < duration)
-					System.Threading.Thread.Sleep((int)(duration - elapsed));
-				lastRefresh = DateTime.Now;
-			}
+			var elapsed = (DateTime.Now - lastRefresh).TotalMilliseconds;
+			if(elapsed < interval)
+				System.Threading.Thread.Sleep((int)(interval - elapsed));
+			lastRefresh = DateTime.Now;
 		}
 
 		public void Draw(Frame frame, Point origin)
@@ -81,6 +73,13 @@ namespace Game
 		public void Draw(Frame frame)
 		{
 			Draw(frame, Point.Empty);
+		}
+
+
+		private static Screen _default = new Screen();
+		public static Screen Default
+		{
+			get => _default;
 		}
 	}
 }
