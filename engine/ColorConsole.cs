@@ -13,7 +13,7 @@ namespace Game
 	public class ColorConsole
 	{
 
-		#region Interop
+		#region Interops
 
 		private const int STD_OUTPUT_HANDLE = -11; //CONOUT$
 
@@ -41,6 +41,34 @@ namespace Game
 
 		private static uint _oldMode = 0;
 		private static Stream StandardOutput = null;
+		private static ConsoleStatus savedStatus;
+
+
+		private static Size _size;
+		public static Size Size
+		{
+			get => _size;
+			set
+			{
+				Console.BufferWidth = Console.WindowWidth = value.Width;
+				Console.BufferHeight = Console.WindowHeight = value.Height;
+				_size = new Size(value.Width, value.Height);
+			}
+		}
+
+		private static Dictionary<char, char> _charMap;
+		public static Dictionary<char, char> CharMap
+		{
+			get
+			{
+				if(_charMap == null)
+				{
+					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"worms\resources\map.txt"));
+					_charMap = new Dictionary<char, char>(map.Select(e => new KeyValuePair<char, char>(e[0], (char)byte.Parse(e.Substring(1), System.Globalization.NumberStyles.HexNumber))));
+				}
+				return _charMap;
+			}
+		}
 
 
 		public static void Enable()
@@ -62,33 +90,27 @@ namespace Game
 			StandardOutput.Dispose();
 		}
 
-		private static Size _size;
-		public static Size Size
+		public static void SaveStatus()
 		{
-			get => _size;
-			set
+			savedStatus = new ConsoleStatus
 			{
-				Console.BufferWidth = Console.WindowWidth = value.Width;
-				Console.BufferHeight = Console.WindowHeight = value.Height;
-				_size = new Size(value.Width, value.Height);
-			}
+				Title = Console.Title,
+				CursorVisible = Console.CursorVisible,
+				ForegroundColor = Console.ForegroundColor,
+				BackgroundColor = Console.BackgroundColor,
+				Size = new Size(Console.WindowWidth, Console.WindowHeight)
+			};
 		}
 
-
-		private static Dictionary<char, char> _charMap;
-		public static Dictionary<char, char> CharMap
+		public static void RestoreStatus()
 		{
-			get
-			{
-				if(_charMap == null)
-				{
-					var map = File.ReadLines(Path.Combine(Environment.CurrentDirectory, @"worms\resources\map.txt"));
-					_charMap = new Dictionary<char, char>(map.Select(e => new KeyValuePair<char, char>(e[0], (char)byte.Parse(e.Substring(1), System.Globalization.NumberStyles.HexNumber))));
-				}
-				return _charMap;
-			}
+			Console.Title = savedStatus.Title;
+			Console.CursorVisible = savedStatus.CursorVisible;
+			Console.ForegroundColor = savedStatus.ForegroundColor;
+			Console.BackgroundColor = savedStatus.BackgroundColor;
+			Console.BufferWidth = Console.WindowWidth = savedStatus.Size.Width;
+			Console.BufferHeight = Console.WindowHeight = savedStatus.Size.Height;
 		}
-
 
 		public static void Write(string text)
 		{
@@ -100,6 +122,16 @@ namespace Game
 			StandardOutput.Write(buffer, 0, buffer.Length);
 		}
 
+
+
+		private class ConsoleStatus
+		{
+			public string Title;
+			public bool CursorVisible;
+			public ConsoleColor ForegroundColor;
+			public ConsoleColor BackgroundColor;
+			public Size Size;
+		}
 
 
 		/// <summary>

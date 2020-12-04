@@ -13,10 +13,7 @@ namespace Game
 		private DateTime lastRefresh = DateTime.MinValue;
 
 
-		private Screen()
-		{
-			Console.CursorVisible = false;
-		}
+		private Screen() { }
 
 
 		public Size Size => ColorConsole.Size;

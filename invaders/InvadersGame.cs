@@ -8,7 +8,7 @@ namespace Game.Invaders
 	{
 		private InvadersGame()
 		{
-			World = new InvadersWorld(screen.Size);
+			World = new InvadersWorld(Screen.Default.Size);
 		}
 
 

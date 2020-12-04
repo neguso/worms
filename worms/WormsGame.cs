@@ -11,7 +11,7 @@ namespace Game.Worms
 	{
 		private WormsGame()
 		{
-			World = new WormsWorld(screen.Size);
+			World = new WormsWorld(Screen.Default.Size);
 		}
 
 

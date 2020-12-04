@@ -7,15 +7,13 @@ namespace Game
 	public abstract class GenericGame
 	{
 		protected Keyboard keyboard;
-		protected Screen screen;
 		protected Frame frame;
 
 
 		protected GenericGame()
 		{
 			keyboard = new Keyboard();
-			screen = new Screen();
-			frame = new Frame(screen.Size);
+			frame = new Frame(Screen.Default.Size);
 		}
 
 
@@ -38,8 +36,8 @@ namespace Game
 				World.Render(frame);
 
 				// draw frame on screen
-				screen.WaitRefresh();
-				screen.Draw(frame);
+				Screen.Default.WaitRefresh();
+				Screen.Default.Draw(frame);
 			}
 			while(World.Active);
 		}

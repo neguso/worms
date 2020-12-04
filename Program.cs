@@ -11,22 +11,25 @@ namespace MyGame
 	{
 		public static void Main()
 		{
-			Console.Clear();
-			Console.Title = "Space Invaders";
+			ColorConsole.SaveStatus();
 			ColorConsole.Enable();
+
+			Console.CursorVisible = false;
+			Console.Clear();
+			Console.Title = "Invaders Game";
 			ColorConsole.Size = new Size(100, 40);
 
 			InvadersGame.Launch();
 
-			//restore size
 			ColorConsole.Disable();
-			//restore title
+			ColorConsole.RestoreStatus();
 		}
 
 		public static void Main1()
 		{
+			Console.CursorVisible = false;
 			Console.Clear();
-			Console.Title = "The Worms Game";
+			Console.Title = "Worms Game";
 			ColorConsole.Enable();
 			ColorConsole.Size = new Size(100, 40);
 
