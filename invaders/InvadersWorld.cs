@@ -305,7 +305,7 @@ namespace Game.Invaders
 				Index = 1,
 				Name = $"Player {((InvadersWorld)World).CurrentPlayer}",
 				Color = ConsoleColor.White,
-				Lives = 1,
+				Lives = 3,
 				Score = 0,
 				KeyMap = new KeyboardKeyMap[]
 				{
@@ -331,17 +331,17 @@ namespace Game.Invaders
 			// create invaders ships
 			var invaders = new List<InvaderShip>();
 			//
-			//for(int row = 0; row < 1; row++)
-			//	for(int col = 0; col < 5; col++)
-			//		invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
-			////
-			//for(int row = 1; row < 2; row++)
-			//	for(int col = 0; col < 6; col++)
-			//		invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
-			////
-			//for(int row = 2; row < 4; row++)
-			//	for(int col = 0; col < 7; col++)
-			//		invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
+			for(int row = 0; row < 1; row++)
+				for(int col = 0; col < 5; col++)
+					invaders.Add(new InvaderShipSquid(new Point(col * 14 + 1, 3 + row * 5), Arena.Size));
+			//
+			for(int row = 1; row < 2; row++)
+				for(int col = 0; col < 6; col++)
+					invaders.Add(new InvaderShipCrab(new Point(col * 12, 3 + row * 5), Arena.Size));
+			//
+			for(int row = 2; row < 4; row++)
+				for(int col = 0; col < 7; col++)
+					invaders.Add(new InvaderShipOctopus(new Point(col * 10 + 1, 3 + row * 5 + 1), Arena.Size));
 			World.Elements.AddRange(invaders);
 			//
 			World.Elements.Add(new InvaderShipUFO(new Point(-16, 0), Arena.Size));
