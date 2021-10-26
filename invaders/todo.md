@@ -11,12 +11,12 @@
 * 3 lives
 * game over
 * game finished
+* create 3 levels with increasing invaders speed
 - save score
 
 
 ## IDEAS
 
-- create 3 levels with increasing invaders speed
 - better big ship firing logic
 - better invaders firing logic
 - embed resources
