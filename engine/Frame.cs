@@ -103,7 +103,7 @@ namespace Game
 		}
 
 		/// <summary>
-		/// Fill element buffer with specified brick.
+		/// Fill frame buffer with specified brick.
 		/// </summary>
 		public void Fill(Brick brick)
 		{

@@ -8,7 +8,6 @@ namespace Game
 	/// <summary>
 	/// Map input keys to game commands.
 	/// </summary>
-	/// <typeparam name="KeyType"></typeparam>
 	abstract public class KeyMap<KeyType>
 	{
 		public KeyType Key { get; private set; }

@@ -22,7 +22,7 @@ namespace Game
 		}
 
 		/// <summary>
-		/// Read all keys that are down at this moment.
+		/// Read all keys that are down when this method is called.
 		/// </summary>
 		public List<ConsoleKey> ReadKeyDown()
 		{
