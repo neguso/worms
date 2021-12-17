@@ -9,7 +9,7 @@ namespace MyGame
 {
 	internal class Program
 	{
-		public static void Main()
+		public static void Main1()
 		{
 			ColorConsole.SaveStatus();
 			ColorConsole.Enable();
@@ -25,19 +25,20 @@ namespace MyGame
 			ColorConsole.RestoreStatus();
 		}
 
-		public static void Main1()
+		public static void Main()
 		{
+			ColorConsole.SaveStatus();
+			ColorConsole.Enable();
+
 			Console.CursorVisible = false;
 			Console.Clear();
 			Console.Title = "Worms Game";
-			ColorConsole.Enable();
 			ColorConsole.Size = new Size(100, 40);
 
 			WormsGame.Launch();
 
-			//restore size
 			ColorConsole.Disable();
-			//restore title
+			ColorConsole.RestoreStatus();
 		}
 	}
 }
