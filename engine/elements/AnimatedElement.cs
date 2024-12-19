@@ -50,7 +50,7 @@ namespace Game
 
 
 		public List<Brick[,]> Slides { get; private set; }
-		public int Active { get; set; }
+		public int Active { get; protected set; }
 
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace Game
 		}
 
 		/// <summary>
-		/// Advance to next slide.
+		/// Advance to next slide, after last slide restart from first.
 		/// </summary>
 		public void Next()
 		{

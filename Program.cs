@@ -9,7 +9,7 @@ namespace MyGame
 {
 	internal class Program
 	{
-		public static void Main1()
+		public static void Main()
 		{
 			ColorConsole.SaveStatus();
 			ColorConsole.Enable();
@@ -25,7 +25,7 @@ namespace MyGame
 			ColorConsole.RestoreStatus();
 		}
 
-		public static void Main()
+		public static void Main2()
 		{
 			ColorConsole.SaveStatus();
 			ColorConsole.Enable();

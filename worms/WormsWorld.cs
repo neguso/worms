@@ -199,13 +199,13 @@ namespace Game.Worms
 				Color = ConsoleColor.Blue,
 				Lives = 5,
 				Score = 0,
-				KeyMap = new KeyboardKeyMap[]
-			{
-					new KeyboardKeyMap(ConsoleKey.LeftArrow, Command.Left),
-					new KeyboardKeyMap(ConsoleKey.RightArrow, Command.Right),
-					new KeyboardKeyMap(ConsoleKey.UpArrow, Command.Up),
-					new KeyboardKeyMap(ConsoleKey.DownArrow, Command.Down)
-			}
+				KeyMap =
+				[
+						new KeyboardKeyMap(ConsoleKey.LeftArrow, Command.Left),
+						new KeyboardKeyMap(ConsoleKey.RightArrow, Command.Right),
+						new KeyboardKeyMap(ConsoleKey.UpArrow, Command.Up),
+						new KeyboardKeyMap(ConsoleKey.DownArrow, Command.Down)
+				]
 			};
 			World.Players.Add(player1);
 			//
@@ -221,13 +221,13 @@ namespace Game.Worms
 					Color = ConsoleColor.Green,
 					Lives = 5,
 					Score = 0,
-					KeyMap = new KeyboardKeyMap[]
-					{
+					KeyMap =
+					[
 							new KeyboardKeyMap(ConsoleKey.A, Command.Left),
 							new KeyboardKeyMap(ConsoleKey.D, Command.Right),
 							new KeyboardKeyMap(ConsoleKey.W, Command.Up),
 							new KeyboardKeyMap(ConsoleKey.S, Command.Down)
-					}
+					]
 				};
 				World.Players.Add(player2);
 				//

@@ -10,11 +10,11 @@ namespace Game.Worms
 		{
 			UpdateTimer.Reset(20);
 
-			Items.AddRange(new MenuItem[] {
+			Items.AddRange([
 				new MenuItem("new_game_1", "1 Player"),
 				new MenuItem("new_game_2", "2 Players"),
 				new MenuItem("quit_game", "Quit"),
-			});
+			]);
 			Selected = Items[0];
 		}
 

@@ -21,7 +21,7 @@ namespace Game
 
 		public Size Size
 		{
-			get => new Size(buffer.GetLength(0), buffer.GetLength(1));
+			get => new(buffer.GetLength(0), buffer.GetLength(1));
 		}
 
 
@@ -140,7 +140,7 @@ namespace Game
 		public void HLine(Point location, int width, Brick brick, Brick[] ends = null)
 		{
 			if(ends == null)
-				ends = new Brick[] { brick, brick };
+				ends = [brick, brick];
 			for(int i = 0; i < width; i++)
 				SetBrick(new Point(location.X + i, location.Y), i == 0 ? ends[0] : (i == width - 1 ? ends[1] : brick));
 		}
@@ -148,15 +148,14 @@ namespace Game
 		public void VLine(Point location, int height, Brick brick, Brick[] ends = null)
 		{
 			if(ends == null)
-				ends = new Brick[] { brick, brick };
+				ends = [brick, brick];
 			for(int i = 0; i < height; i++)
 				SetBrick(new Point(location.X, location.Y + i), i == 0 ? ends[0] : (i == height - 1 ? ends[1] : brick));
 		}
 
 		public void Rectangle(Point location, Size size, Brick[] bricks, Brick[] corners = null, Brick fill = null)
 		{
-			if(corners == null)
-				corners = new Brick[] { bricks[0], bricks[0], bricks[0], bricks[0] };
+			corners ??= [bricks[0], bricks[0], bricks[0], bricks[0]];
 			// draw rectangle counter clockwise:  left, bottom, right, top
 			VLine(new Point(location.X, location.Y + 1), size.Height - 2, bricks[3]);
 			HLine(new Point(location.X, location.Y + size.Height - 1), size.Width, bricks[2], new Brick[] { corners[3], corners[2] });

@@ -19,6 +19,7 @@ namespace Game
 		public Size Size => ColorConsole.Size;
 
 
+		// fake refresh
 		public void WaitRefresh(double interval = 16.66667) // 60Hz
 		{
 			var elapsed = (DateTime.Now - lastRefresh).TotalMilliseconds;
