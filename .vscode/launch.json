@@ -1,0 +1,15 @@
+{
+	"configurations": [
+		{
+			"name": "Debug Console App",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0-windows/worms.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}",
+			"console": "internalConsole",
+			"stopAtEntry": false
+		}
+	]
+}
