@@ -172,12 +172,12 @@ namespace Game
 					SetBrick(new Point(location.X + x, location.Y + y), brick);
 		}
 
-		public void Text(Point location, string text, ConsoleColor foreground = ConsoleColor.White, ConsoleColor backgound = ConsoleColor.Black)
+		public void Text(Point location, string text, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
 		{
 			if(string.IsNullOrEmpty(text)) return;
 			var chars = text.ToCharArray();
 			for(int i = 0; i < chars.Length; i++)
-				SetBrick(new Point(location.X + i, location.Y), Brick.From(chars[i], foreground, backgound));
+				SetBrick(new Point(location.X + i, location.Y), Brick.From(chars[i], foreground, background));
 		}
 	}
 }

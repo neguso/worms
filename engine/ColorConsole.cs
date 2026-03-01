@@ -10,7 +10,7 @@ namespace Game
 	/// <summary>
 	/// Fast text console that supports colors.
 	/// </summary>
-	public class ColorConsole
+	public class ColorConsole_
 	{
 
 		#region Interops
@@ -139,8 +139,8 @@ namespace Game
 		/// </summary>
 		public static class Escape
 		{
-			private readonly static int[] ForegroundColorMap = { 30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97 };
-			private readonly static int[] BackgroundColorMap = { 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 };
+			private readonly static int[] ForegroundColorMap = [30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97];
+			private readonly static int[] BackgroundColorMap = [ 40, 44, 42, 46, 41, 45, 43, 47, 100, 104, 102, 106, 101, 105, 103, 107 ];
 
 			public static string Color(ConsoleColor foreground, ConsoleColor background = ConsoleColor.Black)
 			{

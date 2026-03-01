@@ -75,7 +75,7 @@ namespace Game.Invaders
 
 		protected override void UpdateCore()
 		{
-			// commands containts all pressed keys
+			// commands contains all pressed keys
 			switch(Status)
 			{
 				case ShipStatus.Normal:
@@ -122,7 +122,7 @@ namespace Game.Invaders
 
 		public InvaderShip(Point location, Size size, Size range) : base(location, size)
 		{
-			ZIndex = 1; // draw invaders on top of bariers
+			ZIndex = 1; // draw invaders on top of barriers
 			bombs = new List<Bomb>();
 			explodingTimer = new Timer(UpdateTimer.Interval);
 			Range = range;
@@ -294,7 +294,7 @@ namespace Game.Invaders
 		public Projectile(Point location, int direction, int range) : base(location, new Size(1, 1))
 		{
 			ZIndex = 2; // draw projectiles on top of invaders
-			State = MissileState.Lauched;
+			State = MissileState.Launched;
 			Direction = direction;
 			Range = range;
 
@@ -313,7 +313,7 @@ namespace Game.Invaders
 		{
 			switch(State)
 			{
-				case MissileState.Lauched:
+				case MissileState.Launched:
 					if(Range > 0)
 					{
 						Location.Y += Direction;
@@ -338,7 +338,7 @@ namespace Game.Invaders
 
 		public enum MissileState
 		{
-			Lauched,
+			Launched,
 			Exploding,
 			OutOfRange
 		}

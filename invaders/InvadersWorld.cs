@@ -368,7 +368,7 @@ namespace Game.Invaders
 		public override void Tick(IEnumerable<ConsoleKey> keys)
 		{
 			// check missiles collisions
-			foreach(var missile in World.Elements.OfType<Projectile>().Where(m => m.State == Projectile.MissileState.Lauched))
+			foreach(var missile in World.Elements.OfType<Projectile>().Where(m => m.State == Projectile.MissileState.Launched))
 			{
 				// with barriers
 				foreach(var barrier in World.Elements.OfType<Barrier>())
